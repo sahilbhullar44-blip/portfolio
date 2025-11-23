@@ -860,7 +860,8 @@ const About = () => {
       name: "certificates.js",
       icon: <FileText size={16} />,
       color: "text-emerald-400",
-      fileUrl: "https://53haygcbhbeqdgjo.public.blob.vercel-storage.com/Sahilpreet%20Singh%20-%20Cv.pdf",
+      fileUrl:
+        "https://53haygcbhbeqdgjo.public.blob.vercel-storage.com/Sahilpreet%20Singh%20-%20Cv.pdf",
       content: (
         <div className="space-y-3 font-mono text-sm md:text-base text-gray-300">
           <h3 className="text-white font-bold">Certificates</h3>
@@ -873,7 +874,9 @@ const About = () => {
           <p className="mt-3 text-gray-400">Full resume available here:</p>
           <Link
             className="underline text-sky-300"
-            href={"https://53haygcbhbeqdgjo.public.blob.vercel-storage.com/Sahilpreet%20Singh%20-%20Cv.pdf"}
+            href={
+              "https://53haygcbhbeqdgjo.public.blob.vercel-storage.com/Sahilpreet%20Singh%20-%20Cv.pdf"
+            }
             target="_blank"
           >
             Open Resume (PDF)
@@ -2109,6 +2112,8 @@ const Projects = () => {
 };
 
 // --- 7. DEVELOPER CONTACT FORM ---
+import { sendEmail } from "./actions";
+
 const ContactForm = () => {
   const [formState, setFormState] = useState({
     name: "",
@@ -2117,6 +2122,7 @@ const ContactForm = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState("");
   const containerRef = useRef(null);
   const formRef = useRef(null);
 
@@ -2136,15 +2142,26 @@ const ContactForm = () => {
     { scope: containerRef }
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setError("");
+
+    const formData = new FormData();
+    formData.append("name", formState.name);
+    formData.append("email", formState.email);
+    formData.append("message", formState.message);
+
+    const result = await sendEmail(formData);
+
+    setIsSubmitting(false);
+    if (result.success) {
       setIsSubmitted(true);
       setFormState({ name: "", email: "", message: "" });
-      setTimeout(() => setIsSubmitted(false), 3000);
-    }, 1500);
+      // setTimeout(() => setIsSubmitted(false), 3000);
+    } else {
+      setError("Failed to send message. Please try again.");
+    }
   };
 
   return (
@@ -2329,6 +2346,7 @@ const ContactForm = () => {
                     </span>
                   )}
                 </button>
+                {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
               </div>
             </form>
           </div>
