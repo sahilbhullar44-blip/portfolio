@@ -1,32 +1,17 @@
+/* eslint-disable react/jsx-no-comment-textnodes */
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-  useMotionValue,
-} from "framer-motion";
+import React, { useEffect, useRef, useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(ScrollTrigger);
 import {
-  Code2,
-  Database,
   Cpu,
-  ArrowRight,
-  Github,
-  Twitter,
   Mail,
-  Layers,
   Terminal,
-  Send,
-  Check,
   Linkedin,
-  Command,
-  Hash,
   ArrowDownToLine,
   ArrowUpFromLine,
   Eye,
@@ -36,25 +21,15 @@ import {
   FileText,
   Folder,
   ChevronRight,
-  X,
   Layout,
-  Minus,
-  Square,
-  GitBranch,
-  Star,
-  GitFork,
-  Globe,
-  Circle,
   HardDrive,
-  Clock,
-  Shield,
   Search,
   Smartphone,
   Server,
-  Activity,
 } from "lucide-react";
 
 import { getSystemSpecs } from "@/app/actions";
+import Link from "next/link";
 
 // --- 1. CUSTOM CURSOR COMPONENT ---
 const CustomCursor = () => {
@@ -62,15 +37,17 @@ const CustomCursor = () => {
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
-    const moveCursor = (e) => {
+    const moveCursor = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
-      const target = e.target;
+      const target = e.target as HTMLElement;
       setIsHovering(
-        target.tagName === "BUTTON" ||
+        !!(
+          target.tagName === "BUTTON" ||
           target.tagName === "A" ||
           target.tagName === "INPUT" ||
           target.tagName === "TEXTAREA" ||
           target.closest(".interactive")
+        )
       );
     };
     window.addEventListener("mousemove", moveCursor);
@@ -151,24 +128,26 @@ const BootLoader = ({ onComplete }: { onComplete: () => void }) => {
 
   return (
     <motion.div
-      className="fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center font-mono text-xs md:text-sm text-cyan-400 p-8"
+      className="fixed inset-0 bg-black z-100 flex flex-col items-center justify-center font-mono text-xs md:text-sm text-cyan-400 p-8"
       exit={{ opacity: 0, transition: { duration: 0.8, ease: "easeInOut" } }}
     >
       <div className="w-full max-w-md space-y-4">
         <div className="border-b border-cyan-500/30 pb-2 mb-4 flex justify-between items-end">
-          <span className="text-lg font-bold">DEV.IO BIOS v1.0</span>
+          <span className="text-lg font-bold">Sahilpreet Singh BIOS v1.0</span>
           <span>{new Date().getFullYear()}</span>
         </div>
-        
+
         <div className="h-48 overflow-hidden flex flex-col justify-end space-y-1 font-mono">
           {logs.map((log, i) => (
-            <motion.div 
+            <motion.div
               key={i}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center gap-2"
             >
-              <span className="text-cyan-500/50">[{new Date().toLocaleTimeString()}]</span>
+              <span className="text-cyan-500/50">
+                [{new Date().toLocaleTimeString()}]
+              </span>
               <span>{log}</span>
             </motion.div>
           ))}
@@ -180,7 +159,7 @@ const BootLoader = ({ onComplete }: { onComplete: () => void }) => {
             <span>{progress}%</span>
           </div>
           <div className="h-1 w-full bg-cyan-900/30 rounded-full overflow-hidden">
-            <motion.div 
+            <motion.div
               className="h-full bg-cyan-400 shadow-[0_0_10px_#22d3ee]"
               style={{ width: `${progress}%` }}
             />
@@ -199,6 +178,16 @@ const Hero = () => {
   const [cpuText, setCpuText] = useState("CORE_i9"); // Initialize with default
   const [subText, setSubText] = useState("128 THREADS"); // Initialize with default
 
+  // Pre-calculate deterministic values to avoid calling Math.random during render
+  const pathAnimations = useMemo(
+    () =>
+      Array.from({ length: 8 }, (_, i) => ({
+        duration: 2 + ((i * 0.3) % 1),
+        delay: (i * 0.25) % 2,
+      })),
+    []
+  );
+
   useEffect(() => {
     const fetchSystemData = async () => {
       const specs = await getSystemSpecs();
@@ -209,61 +198,72 @@ const Hero = () => {
     fetchSystemData();
   }, []);
 
-  useGSAP(() => {
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true,
-      },
-    });
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
 
-    tl.to(contentRef.current, {
-      y: 200,
-      opacity: 0,
-      ease: "none",
-    });
+      tl.to(contentRef.current, {
+        y: 200,
+        opacity: 0,
+        ease: "none",
+      });
 
-    gsap.from(cpuRef.current, {
-      scale: 0.8,
-      opacity: 0,
-      duration: 1,
-      ease: "power3.out",
-    });
-  }, { scope: containerRef });
+      gsap.from(cpuRef.current, {
+        scale: 0.8,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+      });
+    },
+    { scope: containerRef }
+  );
 
   return (
-    <section ref={containerRef} className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-black pt-20 md:pt-0 hero-section">
+    <section
+      ref={containerRef}
+      className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-black pt-20 md:pt-0 hero-section"
+    >
       {/* Background Circuit Lines */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-         {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent w-full"
-              style={{ top: `${20 + i * 15}%` }}
-              animate={{ x: ['-100%', '100%'] }}
-              transition={{ duration: 10 + i * 2, repeat: Infinity, ease: "linear" }}
-            />
-         ))}
-          {[...Array(5)].map((_, i) => (
-            <motion.div
-              key={`v-${i}`}
-              className="absolute w-[1px] bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent h-full"
-              style={{ left: `${20 + i * 15}%` }}
-              animate={{ y: ['-100%', '100%'] }}
-              transition={{ duration: 15 + i * 2, repeat: Infinity, ease: "linear", delay: i }}
-            />
-         ))}
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute h-px bg-linear-to-r from-transparent via-cyan-500/20 to-transparent w-full"
+            style={{ top: `${20 + i * 15}%` }}
+            animate={{ x: ["-100%", "100%"] }}
+            transition={{
+              duration: 10 + i * 2,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+        ))}
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={`v-${i}`}
+            className="absolute w-px bg-linear-to-b from-transparent via-cyan-500/20 to-transparent h-full"
+            style={{ left: `${20 + i * 15}%` }}
+            animate={{ y: ["-100%", "100%"] }}
+            transition={{
+              duration: 15 + i * 2,
+              repeat: Infinity,
+              ease: "linear",
+              delay: i,
+            }}
+          />
+        ))}
       </div>
 
       <div className="container mx-auto px-6 z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center h-full">
-        
         {/* Left Column: Info */}
-        <div 
-          ref={contentRef}
-          className="flex flex-col items-start space-y-6"
-        >
+        <div ref={contentRef} className="flex flex-col items-start space-y-6">
           <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs border border-cyan-900/50 bg-cyan-950/30 px-3 py-1 rounded-full">
             <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_8px_#22d3ee]"></span>
             <span>SYSTEM_READY</span>
@@ -271,96 +271,132 @@ const Hero = () => {
 
           <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-none">
             FULL STACK
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600">
+            <span className="block text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-purple-600">
               ARCHITECT
             </span>
           </h1>
 
           <div className="font-mono text-sm text-gray-400 space-y-2 border-l-2 border-cyan-900 pl-4">
-            <p>&gt; OPTIMIZING KERNEL PROCESSES...</p>
-            <p>&gt; ALLOCATING MEMORY BLOCKS...</p>
-            <p className="text-white">&gt; EXECUTING MAIN THREAD</p>
+            {[...Array(3)].map((_, index) => {
+              const text = [
+                "OPTIMIZING KERNEL PROCESSES...",
+                "ALLOCATING MEMORY BLOCKS...",
+                "EXECUTING MAIN THREAD",
+              ][index];
+              return (
+                <motion.p
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{
+                    opacity: 1,
+                    x: 0,
+                    color: index === 2 ? "#ffffff" : "#94a3b8",
+                  }}
+                  transition={{
+                    duration: 0.4,
+                    delay: index * 0.5,
+                    ease: "easeOut",
+                  }}
+                  className={index === 2 ? "text-white" : ""}
+                >
+                  {text}
+                </motion.p>
+              );
+            })}
           </div>
-
           <p className="text-gray-400 max-w-md text-lg font-light">
-            Designing high-performance digital infrastructure with precision engineering.
+            Designing high-performance digital infrastructure with precision
+            engineering.
           </p>
         </div>
 
         {/* Right Column: CPU Visual */}
-        <div 
-          ref={cpuRef}
-          className="relative flex items-center justify-center"
-        >
+        <div ref={cpuRef} className="relative flex items-center justify-center">
           {/* CPU Container */}
           <div className="relative w-64 h-64 md:w-96 md:h-96">
-            
             {/* Circuit Traces (SVG) */}
-            <svg className="absolute inset-0 w-full h-full drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]" viewBox="0 0 400 400">
+            <svg
+              className="absolute inset-0 w-full h-full drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]"
+              viewBox="0 0 400 400"
+            >
               <defs>
-                <linearGradient id="traceGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <linearGradient
+                  id="traceGrad"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
                   <stop offset="0%" stopColor="rgba(34,211,238,0)" />
                   <stop offset="50%" stopColor="#22d3ee" />
                   <stop offset="100%" stopColor="rgba(34,211,238,0)" />
                 </linearGradient>
               </defs>
-              
+
               {/* Animated Paths */}
               {[...Array(8)].map((_, i) => {
-                 const angle = (i / 8) * Math.PI * 2;
-                 const x1 = 200 + Math.cos(angle) * 80;
-                 const y1 = 200 + Math.sin(angle) * 80;
-                 const x2 = 200 + Math.cos(angle) * 180;
-                 const y2 = 200 + Math.sin(angle) * 180;
-                 
-                 return (
-                   <motion.path
-                     key={i}
-                     d={`M ${x1} ${y1} L ${x2} ${y2}`}
-                     stroke="url(#traceGrad)"
-                     strokeWidth="2"
-                     fill="none"
-                     initial={{ pathLength: 0, opacity: 0 }}
-                     animate={{ 
-                       pathLength: [0, 1, 0], 
-                       opacity: [0, 1, 0],
-                       strokeDashoffset: [0, -100]
-                     }}
-                     transition={{ 
-                       duration: 2 + Math.random(), 
-                       repeat: Infinity, 
-                       ease: "linear",
-                       delay: Math.random() * 2
-                     }}
-                   />
-                 );
+                const angle = (i / 8) * Math.PI * 2;
+                const x1 = 200 + Math.cos(angle) * 80;
+                const y1 = 200 + Math.sin(angle) * 80;
+                const x2 = 200 + Math.cos(angle) * 180;
+                const y2 = 200 + Math.sin(angle) * 180;
+
+                return (
+                  <motion.path
+                    key={i}
+                    d={`M ${x1} ${y1} L ${x2} ${y2}`}
+                    stroke="url(#traceGrad)"
+                    strokeWidth="2"
+                    fill="none"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{
+                      pathLength: [0, 1, 0],
+                      opacity: [0, 1, 0],
+                      strokeDashoffset: [0, -100],
+                    }}
+                    transition={{
+                      duration: pathAnimations[i].duration,
+                      repeat: Infinity,
+                      ease: "linear",
+                      delay: pathAnimations[i].delay,
+                    }}
+                  />
+                );
               })}
             </svg>
 
             {/* Main CPU Chip */}
             <div className="absolute inset-0 m-auto w-40 h-40 md:w-56 md:h-56 bg-zinc-900 border-2 border-cyan-500/50 rounded-xl flex items-center justify-center shadow-[0_0_30px_rgba(34,211,238,0.15)] z-20 overflow-hidden group">
-               {/* Inner Grid Pattern */}
-               <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.05)_1px,transparent_1px)] bg-[size:10px_10px]" />
-               
-               {/* Core Pulse */}
-               <motion.div 
-                 className="absolute inset-0 bg-cyan-500/10"
-                 animate={{ opacity: [0.1, 0.3, 0.1] }}
-                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-               />
+              {/* Inner Grid Pattern */}
+              <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.05)_1px,transparent_1px)] bg-size-[10px_10px]" />
 
-               {/* Chip Content */}
-               <div className="relative z-30 flex flex-col items-center">
-                  <Cpu size={48} className="text-cyan-400 mb-2" />
-                  <div className="text-cyan-100 font-mono font-bold text-xl tracking-widest">{cpuText}</div>
-                  <div className="text-cyan-500/70 font-mono text-[10px] mt-1">{subText}</div>
-               </div>
+              {/* Core Pulse */}
+              <motion.div
+                className="absolute inset-0 bg-cyan-500/10"
+                animate={{ opacity: [0.1, 0.3, 0.1] }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
 
-               {/* Corner Accents */}
-               <div className="absolute top-2 left-2 w-2 h-2 border-t border-l border-cyan-500" />
-               <div className="absolute top-2 right-2 w-2 h-2 border-t border-r border-cyan-500" />
-               <div className="absolute bottom-2 left-2 w-2 h-2 border-b border-l border-cyan-500" />
-               <div className="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-cyan-500" />
+              {/* Chip Content */}
+              <div className="relative z-30 flex flex-col items-center">
+                <Cpu size={48} className="text-cyan-400 mb-2" />
+                <div className="text-cyan-100 font-mono font-bold text-xl tracking-widest">
+                  {cpuText}
+                </div>
+                <div className="text-cyan-500/70 font-mono text-[10px] mt-1">
+                  {subText}
+                </div>
+              </div>
+
+              {/* Corner Accents */}
+              <div className="absolute top-2 left-2 w-2 h-2 border-t border-l border-cyan-500" />
+              <div className="absolute top-2 right-2 w-2 h-2 border-t border-r border-cyan-500" />
+              <div className="absolute bottom-2 left-2 w-2 h-2 border-b border-l border-cyan-500" />
+              <div className="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-cyan-500" />
             </div>
 
             {/* Floating Particles around CPU */}
@@ -368,28 +404,26 @@ const Hero = () => {
               <motion.div
                 key={i}
                 className="absolute w-1 h-1 bg-cyan-400 rounded-full"
-                style={{ 
-                  top: '50%', 
-                  left: '50%',
+                style={{
+                  top: "50%",
+                  left: "50%",
                 }}
-                animate={{ 
+                animate={{
                   x: Math.cos(i) * 140,
                   y: Math.sin(i) * 140,
                   opacity: [0, 1, 0],
-                  scale: [0, 1.5, 0]
+                  scale: [0, 1.5, 0],
                 }}
-                transition={{ 
-                  duration: 3, 
-                  repeat: Infinity, 
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
                   delay: i * 0.5,
-                  ease: "easeOut"
+                  ease: "easeOut",
                 }}
               />
             ))}
-
           </div>
         </div>
-
       </div>
 
       <motion.div
@@ -397,7 +431,7 @@ const Hero = () => {
         animate={{ opacity: [0.5, 1, 0.5] }}
         transition={{ duration: 2, repeat: Infinity }}
       >
-        <div className="w-[1px] h-12 bg-gradient-to-b from-cyan-500 to-transparent"></div>
+        <div className="w-px h-12 bg-linear-to-b from-cyan-500 to-transparent"></div>
         SCROLL_TO_PROCESS
       </motion.div>
     </section>
@@ -411,32 +445,36 @@ const About = () => {
   const titleRef = useRef(null);
   const editorRef = useRef(null);
 
-  useGSAP(() => {
-    gsap.from(titleRef.current, {
-      scrollTrigger: {
-        trigger: titleRef.current,
-        start: "top 80%",
-      },
-      y: 50,
-      opacity: 0,
-      duration: 1,
-      ease: "power3.out",
-    });
+  useGSAP(
+    () => {
+      gsap.from(titleRef.current, {
+        scrollTrigger: {
+          trigger: titleRef.current,
+          start: "top 80%",
+        },
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+      });
 
-    gsap.from(editorRef.current, {
-      scrollTrigger: {
-        trigger: editorRef.current,
-        start: "top 80%",
-      },
-      y: 100,
-      opacity: 0,
-      duration: 1,
-      delay: 0.2,
-      ease: "power3.out",
-    });
-  }, { scope: containerRef });
+      gsap.from(editorRef.current, {
+        scrollTrigger: {
+          trigger: editorRef.current,
+          start: "top 80%",
+        },
+        y: 100,
+        opacity: 0,
+        duration: 1,
+        delay: 0.2,
+        ease: "power3.out",
+      });
+    },
+    { scope: containerRef }
+  );
 
   const files = [
+    // ================= README.md =================
     {
       id: "readme.md",
       name: "README.md",
@@ -445,11 +483,13 @@ const About = () => {
       content: (
         <div className="space-y-4 font-mono text-sm md:text-base text-gray-300 leading-relaxed">
           <p className="text-gray-500">/**</p>
-          <p className="text-gray-500">&nbsp;* @author Developer</p>
+          <p className="text-gray-500">&nbsp;* @author Sahilpreet Singh</p>
           <p className="text-gray-500">
-            &nbsp;* @desc Passionate Full Stack Architect
+            &nbsp;* @desc Software Engineer — MERN, Realtime Systems,
+            Multi-Tenant Architecture
           </p>
           <p className="text-gray-500">&nbsp;*/</p>
+
           <br />
           <p>
             <span className="text-purple-400">const</span>{" "}
@@ -457,22 +497,34 @@ const About = () => {
             <span className="text-white">=</span>{" "}
             <span className="text-yellow-400">`</span>
           </p>
+
           <p className="pl-4">
-            I specialize in building scalable, high-performance applications. My
-            approach combines rigorous{" "}
-            <span className="text-cyan-400">computer science fundamentals</span>{" "}
-            with modern aesthetic sensibilities.
+            I am a Software Engineer from Amritsar with hands-on experience in
+            building scalable multi-tenant apps, realtime modules, MongoDB
+            aggregation pipelines, ETL automation, and clean React/Next.js
+            frontends.
           </p>
-          <p className="pl-4 mt-2">
-            Whether it's optimizing database queries or crafting fluid UI
-            animations, I obsess over every byte and pixel.
+
+          <p className="pl-4">
+            Currently contributing at Tickmark.io, where I work on RBAC systems,
+            agenda scheduling, realtime notifications, and transforming audio
+            feedback into automated tasks using ETL + AI workflows.
           </p>
+
+          <p className="pl-4">
+            I love working on production-grade applications, clean system
+            design, component architecture, and writing code that is expressive
+            and maintainable.
+          </p>
+
           <p>
             <span className="text-yellow-400">`;</span>
           </p>
         </div>
       ),
     },
+
+    // ================= stats.json (UPDATED with more data) =================
     {
       id: "stats.json",
       name: "stats.json",
@@ -483,45 +535,349 @@ const About = () => {
           <p>
             <span className="text-yellow-400">{"{"}</span>
           </p>
+
           <div className="pl-6 space-y-2 border-l border-white/10 ml-2">
             <p>
-              <span className="text-blue-400">"experience"</span>:{" "}
-              <span className="text-green-400">"5+ Years"</span>,
+              <span className="text-blue-400">&quot;name&quot;</span>:{" "}
+              <span className="text-green-400">
+                &quot;Sahilpreet Singh&quot;
+              </span>
+              ,
             </p>
             <p>
-              <span className="text-blue-400">"location"</span>:{" "}
-              <span className="text-green-400">"San Francisco, CA"</span>,
+              <span className="text-blue-400">
+                &quot;experience_years&quot;
+              </span>
+              :{" "}
+              <span className="text-green-400">
+                &quot;Since 2023 (2+ years)&quot;
+              </span>
+              ,
             </p>
+
             <p>
-              <span className="text-blue-400">"system_status"</span>:{" "}
-              <span className="text-green-400">"Online"</span>,
+              <span className="text-blue-400">&quot;role&quot;</span>:{" "}
+              <span className="text-green-400">
+                &quot;Software Development Engineer&quot;
+              </span>
+              ,
+            </p>
+
+            <p>
+              <span className="text-blue-400">&quot;location&quot;</span>:{" "}
+              <span className="text-green-400">
+                &quot;Timmowal, Amritsar, Punjab, India&quot;
+              </span>
+              ,
+            </p>
+
+            <p>
+              <span className="text-blue-400">&quot;email&quot;</span>:{" "}
+              <span className="text-green-400">
+                &quot;sahilbhullar44@gmail.com&quot;
+              </span>
+              ,
+            </p>
+
+            <p>
+              <span className="text-blue-400">&quot;phone&quot;</span>:{" "}
+              <span className="text-green-400">&quot;+91 8198014292&quot;</span>
+              ,
+            </p>
+
+            <p>
+              <span className="text-blue-400">&quot;currently_at&quot;</span>:{" "}
+              <span className="text-green-400">&quot;Tickmark.io&quot;</span>,
+            </p>
+
+            <p>
+              <span className="text-blue-400">&quot;top_skills&quot;</span>:{" "}
+              <span className="text-green-400">
+                [&quot;React&quot;,&quot;Next.js&quot;,&quot;Node.js&quot;,&quot;Expressjs&quot;,&quot;MongoDB&quot;,&quot;TypeScript&quot;,&quot;Socket.io&quot;]
+              </span>
+              ,
+            </p>
+
+            <p>
+              <span className="text-blue-400">&quot;other_tools&quot;</span>:{" "}
+              <span className="text-green-400">
+                [&quot;Docker&quot;,&quot;AWS&quot;,&quot;TanStack
+                Query&quot;,&quot;Swagger&quot;]
+              </span>
+              ,
+            </p>
+
+            <p>
+              <span className="text-blue-400">&quot;languages&quot;</span>:{" "}
+              <span className="text-green-400">
+                [&quot;English&quot;,&quot;Punjabi&quot;,&quot;Hindi&quot;]
+              </span>
+              ,
+            </p>
+
+            <p>
+              <span className="text-blue-400">&quot;github&quot;</span>:{" "}
+              <span className="text-green-400">
+                &quot;https://github.com/sahilbhullar44-blip&quot;
+              </span>
+              ,
+            </p>
+
+            <p>
+              <span className="text-blue-400">&quot;linkedin&quot;</span>:{" "}
+              <span className="text-green-400">
+                &quot;https://www.linkedin.com/in/sahilpreet-singh-3042b02a5/&quot;
+              </span>
+              ,
             </p>
           </div>
+
           <p>
             <span className="text-yellow-400">{"}"}</span>
           </p>
         </div>
       ),
     },
+
+    // ================= history.log (FULL DETAILED with Education colored) =================
     {
       id: "history.log",
       name: "history.log",
       icon: <FileCode size={16} />,
       color: "text-blue-400",
       content: (
-        <div className="font-mono text-sm md:text-base space-y-6">
-          <div className="flex gap-3">
-            <div className="w-[1px] bg-white/20 relative">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]"></div>
+        <div className="font-mono text-sm md:text-base space-y-10">
+          {/* ---------- TICKMARK.IO ---------- */}
+          <div className="flex gap-4">
+            <div className="w-px bg-white/20 relative">
+              <div
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full 
+            bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.6)]"
+              ></div>
             </div>
-            <div className="pb-2">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-cyan-400 font-bold">2024</span>
-                <span className="text-gray-500 text-xs">[CURRENT]</span>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-cyan-400 font-bold">
+                  Nov 2024 – Present
+                </span>
+                <span className="text-gray-500 text-xs">[CURRENT ROLE]</span>
               </div>
-              <p className="text-white font-bold">Senior Engineer @TechCorp</p>
+
+              <p className="text-white font-bold text-lg">
+                Software Development Engineer @ Tickmark.io
+              </p>
+
+              <p className="text-gray-400">
+                Leading backend + realtime modules for a multi-tenant SaaS
+                project management platform.
+              </p>
+
+              <ul className="list-disc pl-6 text-gray-400 space-y-1">
+                <li>
+                  Built RBAC-based multi-tenant structure with permissions,
+                  roles & workspace control.
+                </li>
+                <li>
+                  Created Agenda Scheduling module with recurring meetings,
+                  timezone logic & cron reminders.
+                </li>
+                <li>
+                  Developed advanced MongoDB aggregation pipelines for analytics
+                  & multi-tenant separation.
+                </li>
+                <li>
+                  Implemented ETL automation: converting patient audio feedback
+                  → structured tasks.
+                </li>
+                <li>
+                  Integrated Socket.io for realtime notifications, task updates
+                  & live sync.
+                </li>
+              </ul>
             </div>
           </div>
+
+          {/* ---------- BESTJOBCOURSES ---------- */}
+          <div className="flex gap-4">
+            <div className="w-px bg-white/20 relative">
+              <div
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full 
+            bg-lime-400 shadow-[0_0_10px_rgba(132,204,22,0.5)]"
+              ></div>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-lime-400 font-bold">
+                  Nov 2024 – Present
+                </span>
+              </div>
+
+              <p className="text-white font-bold text-lg">
+                Teaching — BestJobCourses (Tickmark Branch)
+              </p>
+
+              <p className="text-gray-400 text-sm">
+                Conducting training for MS Office, Google Apps, CCA
+                certification & JavaScript DOM.
+              </p>
+            </div>
+          </div>
+
+          {/* ---------- SCHOOL OF CODING ---------- */}
+          <div className="flex gap-4">
+            <div className="w-px bg-white/20 relative">
+              <div
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full 
+            bg-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.5)]"
+              ></div>
+            </div>
+
+            <div className="space-y-2">
+              <span className="text-amber-400 font-bold">
+                May 2024 – Oct 2025
+              </span>
+
+              <p className="text-white font-bold text-lg">
+                Associate Developer @ School Of Coding (UK)
+              </p>
+
+              <ul className="list-disc pl-6 text-gray-400 space-y-1">
+                <li>
+                  Developed full-stack features for educational dashboards &
+                  admin systems.
+                </li>
+                <li>
+                  Built responsive UIs & optimized backend APIs using MongoDB
+                  aggregations.
+                </li>
+                <li>
+                  Created an educational drag-and-drop environmental awareness
+                  game.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* ---------- SIMBAQUARTZ INTERN ---------- */}
+          <div className="flex gap-4">
+            <div className="w-px bg-white/20 relative">
+              <div
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full 
+            bg-violet-400 shadow-[0_0_10px_rgba(139,92,246,0.6)]"
+              ></div>
+            </div>
+
+            <div className="space-y-2">
+              <span className="text-violet-400 font-bold">
+                Apr 2023 – Apr 2024
+              </span>
+
+              <p className="text-white font-bold text-lg">
+                Intern / Developer Trainee @ SimbaQuartz
+              </p>
+
+              <ul className="list-disc pl-6 text-gray-400 space-y-1">
+                <li>
+                  Worked on Node.js API development & integration with MongoDB
+                  schemas.
+                </li>
+                <li>
+                  Collaborated with frontend teams to ship production features.
+                </li>
+                <li>
+                  Participated in sprints, debugging sessions & QA cycles.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* ---------- SIMBAQUARTZ APPRENTICE ---------- */}
+          <div className="flex gap-4">
+            <div className="w-px bg-white/20 relative">
+              <div
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full 
+            bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.5)]"
+              ></div>
+            </div>
+
+            <div className="space-y-2">
+              <span className="text-sky-400 font-bold">
+                Jan 2023 – Mar 2023
+              </span>
+
+              <p className="text-white font-bold text-lg">
+                Apprentice @ SimbaQuartz
+              </p>
+
+              <p className="text-gray-400 text-sm">
+                Assisted in backend development & testing; gained practical
+                exposure to real-world projects.
+              </p>
+            </div>
+          </div>
+
+          {/* ---------- EDUCATION (COLORED) ---------- */}
+          <div className="flex gap-4">
+            <div className="w-px bg-white/20 relative"></div>
+
+            <div className="space-y-1">
+              <p className="text-white font-bold text-lg">Education</p>
+              <p>
+                <span className="text-indigo-300 font-semibold">
+                  B.Sc. Information Technology
+                </span>
+                <span className="text-gray-400">
+                  {" "}
+                  — Sri Guru Angad Dev College
+                </span>
+                <span className="ml-2 text-amber-300"> (May 2023)</span>
+              </p>
+              <p className="mt-1">
+                <span className="text-white font-bold">Achievement:</span>{" "}
+                <span className="text-emerald-300">
+                  District Topper (1st Rank)
+                </span>
+              </p>
+
+              <p className="text-gray-400 mt-2">
+                <span className="font-bold text-white">Key skills:</span>{" "}
+                <span className="text-green-300">
+                  React, Next.js, Node.js, MongoDB (aggregation), TypeScript,
+                  Socket.io, ETL
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+
+    // ================= certificates.js =================
+    {
+      id: "certificates.js",
+      name: "certificates.js",
+      icon: <FileText size={16} />,
+      color: "text-emerald-400",
+      fileUrl: "/mnt/data/Sahilpreet Singh - Cv.pdf",
+      content: (
+        <div className="space-y-3 font-mono text-sm md:text-base text-gray-300">
+          <h3 className="text-white font-bold">Certificates</h3>
+          <ul className="pl-4 list-disc text-gray-300 space-y-1">
+            <li>ISO Certified Web Designing — Simbacourse</li>
+            <li>ISO Certified Node.js Development — Simbacourse</li>
+            <li>ISO Certified CCA Certificate — Simbacourse</li>
+            <li>React.js Course — CodeProg.com</li>
+          </ul>
+          <p className="mt-3 text-gray-400">Full resume available here:</p>
+          <Link
+            className="underline text-sky-300"
+            href={"/mnt/data/Sahilpreet Singh - Cv.pdf"}
+            target="_blank"
+          >
+            Open Resume (PDF)
+          </Link>{" "}
         </div>
       ),
     },
@@ -538,38 +894,47 @@ const About = () => {
         {[...Array(6)].map((_, i) => (
           <motion.div
             key={`h-${i}`}
-            className="absolute h-[1px] bg-gradient-to-r from-transparent via-purple-500/20 to-transparent w-full"
+            className="absolute h-px bg-linear-to-r from-transparent via-purple-500/20 to-transparent w-full"
             style={{ top: `${15 + i * 14}%` }}
-            animate={{ x: ['-100%', '100%'] }}
-            transition={{ duration: 12 + i * 2, repeat: Infinity, ease: "linear" }}
+            animate={{ x: ["-100%", "100%"] }}
+            transition={{
+              duration: 12 + i * 2,
+              repeat: Infinity,
+              ease: "linear",
+            }}
           />
         ))}
         {[...Array(6)].map((_, i) => (
           <motion.div
             key={`v-${i}`}
-            className="absolute w-[1px] bg-gradient-to-b from-transparent via-purple-500/20 to-transparent h-full"
+            className="absolute w-px bg-linear-to-b from-transparent via-purple-500/20 to-transparent h-full"
             style={{ left: `${15 + i * 14}%` }}
-            animate={{ y: ['-100%', '100%'] }}
-            transition={{ duration: 16 + i * 2, repeat: Infinity, ease: "linear", delay: i * 0.5 }}
+            animate={{ y: ["-100%", "100%"] }}
+            transition={{
+              duration: 16 + i * 2,
+              repeat: Infinity,
+              ease: "linear",
+              delay: i * 0.5,
+            }}
           />
         ))}
       </div>
       {/* Section Shadow Overlays */}
-      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black via-black/50 to-transparent pointer-events-none z-[1]"></div>
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent pointer-events-none z-[1]"></div>
+      <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-b from-black via-black/50 to-transparent pointer-events-none z-1"></div>
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-linear-to-t from-[#050505] via-[#050505]/50 to-transparent pointer-events-none z-1"></div>
       <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 mix-blend-overlay pointer-events-none"></div>
 
       <div className="container mx-auto px-4 md:px-10 relative z-10">
-        <div
-          ref={titleRef}
-          className="mb-12 flex items-end gap-4"
-        >
+        <div ref={titleRef} className="mb-12 flex items-end gap-4">
           <h2 className="text-4xl md:text-6xl font-bold text-white font-mono">
             SOURCE_<span className="text-purple-400">CODE</span>
           </h2>
         </div>
 
-        <div ref={editorRef} className="w-full max-w-5xl mx-auto bg-[#0d0d0d] rounded-xl overflow-hidden border border-white/10 shadow-2xl shadow-black/50 flex flex-col md:flex-row h-[500px]">
+        <div
+          ref={editorRef}
+          className="w-full max-w-6xl mx-auto bg-[#0d0d0d] rounded-xl overflow-hidden border border-white/10 shadow-2xl shadow-black/50 flex flex-col md:flex-row h-[500px]"
+        >
           {/* SIDEBAR */}
           <div className="w-full md:w-64 bg-[#0a0a0a] border-r border-white/5 flex flex-col">
             <div className="p-3 text-xs font-bold text-gray-500 tracking-widest flex items-center gap-2">
@@ -579,7 +944,7 @@ const About = () => {
               <div className="px-4 py-1 text-gray-400 text-sm flex items-center gap-1">
                 <ChevronRight size={14} className="rotate-90" />
                 <Folder size={14} className="text-blue-400" />
-                <span className="font-bold text-gray-300">portfolio-v3</span>
+                <span className="font-bold text-gray-300">files</span>
               </div>
               <div className="pl-4">
                 {files.map((file) => (
@@ -704,66 +1069,88 @@ const techPool = [
   },
 ];
 
-  const TechStack = () => {
-    const [stack, setStack] = useState<any[]>([]);
-    const [isPeeking, setIsPeeking] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [hasStarted, setHasStarted] = useState(false);
-    const containerRef = useRef(null);
-    const titleRef = useRef(null);
-    const controlsRef = useRef(null);
-    const stackRef = useRef(null);
-  
-    // Auto-Push Effect
-    useEffect(() => {
-      if (!hasStarted) return;
+interface TechItem {
+  id: string;
+  name: string;
+  type: string;
+  size: string;
+  color: string;
+  border: string;
+  bg: string;
+  instanceId?: number;
+}
 
-      const interval = setInterval(() => {
-        setStack((prev) => {
-          if (prev.length >= 6) {
-            clearInterval(interval);
-            return prev;
-          }
-          const nextItem = {
-            ...techPool[prev.length % techPool.length],
-            instanceId: Date.now(),
-          };
-          return [...prev, nextItem];
-        });
-      }, 1000);
-  
-      return () => clearInterval(interval);
-    }, [hasStarted]);
+const TechStack = () => {
+  const [stack, setStack] = useState<TechItem[]>([]);
+  const [isPeeking, setIsPeeking] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [hasStarted, setHasStarted] = useState(false);
+  const containerRef = useRef(null);
+  const titleRef = useRef(null);
+  const controlsRef = useRef(null);
+  const stackRef = useRef(null);
+  const idCounterRef = useRef(0);
 
-  useGSAP(() => {
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 70%",
-        onEnter: () => setHasStarted(true),
-      },
-    });
+  // Auto-Push Effect
+  useEffect(() => {
+    if (!hasStarted) return;
 
-    tl.from(titleRef.current, {
-      y: 50,
-      opacity: 0,
-      duration: 0.8,
-      ease: "power3.out",
-    })
-    .from(controlsRef.current, {
-      y: 30,
-      opacity: 0,
-      duration: 0.6,
-      ease: "power3.out",
-    }, "-=0.4")
-    .from(stackRef.current, {
-      x: 50,
-      opacity: 0,
-      duration: 0.8,
-      ease: "power3.out",
-    }, "-=0.6");
+    const interval = setInterval(() => {
+      setStack((prev) => {
+        if (prev.length >= 6) {
+          clearInterval(interval);
+          return prev;
+        }
+        const nextItem = {
+          ...techPool[prev.length % techPool.length],
+          instanceId: ++idCounterRef.current,
+        };
+        return [...prev, nextItem];
+      });
+    }, 1000);
 
-  }, { scope: containerRef });
+    return () => clearInterval(interval);
+  }, [hasStarted]);
+
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 70%",
+          onEnter: () => setHasStarted(true),
+        },
+      });
+
+      tl.from(titleRef.current, {
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+      })
+        .from(
+          controlsRef.current,
+          {
+            y: 30,
+            opacity: 0,
+            duration: 0.6,
+            ease: "power3.out",
+          },
+          "-=0.4"
+        )
+        .from(
+          stackRef.current,
+          {
+            x: 50,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power3.out",
+          },
+          "-=0.6"
+        );
+    },
+    { scope: containerRef }
+  );
 
   const handlePush = () => {
     if (stack.length >= 6) {
@@ -773,7 +1160,7 @@ const techPool = [
     setError(null);
     const nextItem = {
       ...techPool[stack.length % techPool.length],
-      instanceId: Date.now(),
+      instanceId: ++idCounterRef.current,
     };
     setStack((prev) => [...prev, nextItem]);
     setIsPeeking(false);
@@ -815,25 +1202,34 @@ const techPool = [
         {[...Array(5)].map((_, i) => (
           <motion.div
             key={`h-${i}`}
-            className="absolute h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent w-full"
+            className="absolute h-px bg-linear-to-r from-transparent via-cyan-500/20 to-transparent w-full"
             style={{ top: `${20 + i * 15}%` }}
-            animate={{ x: ['-100%', '100%'] }}
-            transition={{ duration: 10 + i * 2, repeat: Infinity, ease: "linear" }}
+            animate={{ x: ["-100%", "100%"] }}
+            transition={{
+              duration: 10 + i * 2,
+              repeat: Infinity,
+              ease: "linear",
+            }}
           />
         ))}
         {[...Array(5)].map((_, i) => (
           <motion.div
             key={`v-${i}`}
-            className="absolute w-[1px] bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent h-full"
+            className="absolute w-px bg-linear-to-b from-transparent via-cyan-500/20 to-transparent h-full"
             style={{ left: `${20 + i * 15}%` }}
-            animate={{ y: ['-100%', '100%'] }}
-            transition={{ duration: 14 + i * 2, repeat: Infinity, ease: "linear", delay: i * 0.3 }}
+            animate={{ y: ["-100%", "100%"] }}
+            transition={{
+              duration: 14 + i * 2,
+              repeat: Infinity,
+              ease: "linear",
+              delay: i * 0.3,
+            }}
           />
         ))}
       </div>
       {/* Section Shadow Overlays */}
-      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#080808] via-[#080808]/50 to-transparent pointer-events-none z-[1]"></div>
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent pointer-events-none z-[1]"></div>
+      <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-b from-[#080808] via-[#080808]/50 to-transparent pointer-events-none z-1"></div>
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-linear-to-t from-[#050505] via-[#050505]/50 to-transparent pointer-events-none z-1"></div>
       <div className="container mx-auto px-4 md:px-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
         <div>
           <div ref={titleRef}>
@@ -844,12 +1240,15 @@ const techPool = [
               </h2>
             </div>
             <p className="text-gray-400 text-lg mb-10 max-w-lg leading-relaxed">
-              Managing technology expertise using a LIFO (Last-In, First-Out) data
-              structure.
+              Managing technology expertise using a LIFO (Last-In, First-Out)
+              data structure.
             </p>
           </div>
-          
-          <div ref={controlsRef} className="bg-[#0a0a0a] border border-white/10 rounded-xl p-6 mb-8 shadow-2xl shadow-cyan-900/5 relative overflow-hidden">
+
+          <div
+            ref={controlsRef}
+            className="bg-[#0a0a0a] border border-white/10 rounded-xl p-6 mb-8 shadow-2xl shadow-cyan-900/5 relative overflow-hidden"
+          >
             <div className="flex items-center justify-between mb-6 text-xs font-mono text-gray-500">
               <span>STATUS: READY</span>
               <span>MEM_ADDR: 0x7FFF</span>
@@ -900,15 +1299,18 @@ const techPool = [
           </div>
         </div>
 
-        <div ref={stackRef} className="relative h-[500px] w-full max-w-md mx-auto">
+        <div
+          ref={stackRef}
+          className="relative h-[500px] w-full max-w-md mx-auto"
+        >
           <motion.div
             className="absolute -left-12 z-20 flex items-center gap-2 text-cyan-400 font-mono text-xs"
             animate={{ bottom: Math.max(32, stack.length * 72 + 32) }}
           >
             <span>SP</span>
-            <span className="w-8 h-[1px] bg-cyan-400"></span>
+            <span className="w-8 h-px bg-cyan-400"></span>
           </motion.div>
-          <div className="h-full w-full border-x-2 border-b-2 border-white/10 rounded-b-xl bg-white/[0.02] backdrop-blur-sm relative p-4 flex flex-col-reverse gap-3 overflow-hidden">
+          <div className="h-full w-full border-x-2 border-b-2 border-white/10 rounded-b-xl bg-white/2 backdrop-blur-sm relative p-4 flex flex-col-reverse gap-3 overflow-hidden">
             <div className="absolute right-2 top-0 bottom-0 flex flex-col justify-between text-[10px] font-mono text-gray-800 pointer-events-none select-none py-4 text-right">
               {Array.from({ length: 8 }).map((_, i) => (
                 <span key={i}>0x00{8 - i}0</span>
@@ -937,12 +1339,12 @@ const techPool = [
                     className={`relative h-16 w-full rounded border ${item.border} ${item.bg} flex items-center justify-between px-4 shrink-0`}
                   >
                     <div className="flex items-center gap-3">
-                      <div
+                      {/* <div
                         className={`w-2 h-2 rounded-full ${item.color.replace(
                           "text-",
                           "bg-"
                         )}`}
-                      ></div>
+                      ></div> */}
                       <span className={`font-bold font-mono ${item.color}`}>
                         {item.name}
                       </span>
@@ -958,7 +1360,6 @@ const techPool = [
   );
 };
 
-// --- MOCK DATA: FILE SYSTEM STRUCTURE ---
 const systemData = {
   root: [
     { id: "fullstack", name: "Fullstack_Dev", type: "folder", icon: Server },
@@ -966,267 +1367,339 @@ const systemData = {
     { id: "mobile", name: "Mobile_Apps", type: "folder", icon: Smartphone },
     { id: "tools", name: "Sys_Utils", type: "folder", icon: Terminal },
   ],
+
   files: {
+    // ---------------- FULLSTACK PROJECTS ----------------
     fullstack: [
       {
-        name: "fintech_dash_v2.tsx",
-        size: "2.4 MB",
-        date: "2024-03-10",
-        desc: "Real-time financial analytics platform with WebSocket updates.",
-        tech: ["Next.js", "Tailwind", "Socket.io"],
+        name: "tickmark.io",
+        size: "7.3 MB",
+        date: "2024-11-15",
+        desc: "Multi-tenant management platform with RBAC permissions, team/task modules and realtime updates.",
+        tech: [
+          "React",
+          "Node.js",
+          "MongoDB",
+          "Express",
+          "Socket.io",
+          "TypeScript",
+          "RBAC",
+          "Cron",
+          "Aggregation Pipelines",
+        ],
         status: "Production",
         color: "text-blue-400",
       },
+
       {
-        name: "ecom_headless.node",
-        size: "8.1 MB",
-        date: "2024-01-15",
-        desc: "Modular backend solution for scalable e-commerce inventory.",
-        tech: ["Node.js", "MongoDB", "GraphQL"],
-        status: "Beta",
-        color: "text-green-400",
+        name: "amritsar.com",
+        size: "5.5 MB",
+        date: "2024-09-30",
+        desc: "Live streaming platform with YouTube integration, realtime chat and content moderation.",
+        tech: ["Next.js", "Express", "TypeScript", "Socket.io"],
+        status: "Production",
+        color: "text-red-400",
       },
-    ],
-    ai_ml: [
+
       {
-        name: "img_synth_core.py",
-        size: "450 MB",
-        date: "2024-02-28",
-        desc: "Generative AI interface connecting to Stable Diffusion API.",
-        tech: ["Python", "FastAPI", "PyTorch"],
-        status: "Research",
-        color: "text-yellow-400",
-      },
-      {
-        name: "nlp_processor.model",
-        size: "1.2 GB",
-        date: "2023-11-20",
-        desc: "Custom entity extraction model for legal documents.",
-        tech: ["HuggingFace", "TensorFlow"],
-        status: "Active",
+        name: "sofa_studio",
+        size: "3.6 MB",
+        date: "2024-10-15",
+        desc: "Admin dashboard for managing sofa designs with TanStack Query integration.",
+        tech: ["Next.js", "Node.js", "TanStack Query", "TypeScript"],
+        status: "Stable",
         color: "text-purple-400",
       },
+
+      {
+        name: "shivshaktifastfood",
+        size: "4.1 MB",
+        date: "2024-08-10",
+        desc: "Food ordering web app with product management and live order tracking.",
+        tech: ["Next.js", "MongoDB"],
+        status: "Production",
+        color: "text-orange-400",
+      },
+
+      {
+        name: "super_choice_services",
+        size: "3.9 MB",
+        date: "2024-07-20",
+        desc: "Multilingual appointment booking platform with automated notifications.",
+        tech: ["Next.js", "MongoDB", "i18n"],
+        status: "Active",
+        color: "text-green-400",
+      },
+
+      {
+        name: "best_micro_garden",
+        size: "3.4 MB",
+        date: "2024-06-15",
+        desc: "Service management system with advanced MongoDB filtering and category management.",
+        tech: ["React", "MongoDB", "Aggregation Pipelines"],
+        status: "Active",
+        color: "text-yellow-400",
+      },
+
+      {
+        name: "space_project",
+        size: "2.7 MB",
+        date: "2024-05-20",
+        desc: "Interactive mission timeline visualization dashboard with animations.",
+        tech: ["React", "CSS Animations", "Component Architecture"],
+        status: "Stable",
+        color: "text-indigo-400",
+      },
     ],
+
+    // ---------------- AI / ML ----------------
+    ai_ml: [
+      {
+        name: "medfeed.ai",
+        size: "600 MB",
+        date: "2024-09-12",
+        desc: "AI-powered ETL system that converts patient audio feedback into actionable tasks using speech-to-text and NLP.",
+        tech: ["Python", "ChatGPT API", "Whisper", "FastAPI"],
+        status: "Active",
+        color: "text-pink-400",
+      },
+    ],
+
+    // ---------------- MOBILE ----------------
     mobile: [
       {
-        name: "fitness_tracker.apk",
-        size: "45 MB",
-        date: "2024-04-05",
-        desc: "Cross-platform health tracking app with bluetooth sync.",
-        tech: ["React Native", "Firebase", "Redux"],
-        status: "Published",
-        color: "text-cyan-400",
+        name: "memeSake",
+        size: "38 MB",
+        date: "2024-06-09",
+        desc: "React Native mobile app for uploading, managing and browsing meme content with optimized performance.",
+        tech: ["React Native"],
+        status: "Beta",
+        color: "text-lime-400",
       },
     ],
+
+    // ---------------- TOOLS ----------------
     tools: [
       {
-        name: "task_queue.go",
-        size: "12 KB",
-        date: "2023-12-12",
-        desc: "High-throughput distributed message queue system.",
-        tech: ["Go", "gRPC", "Docker"],
-        status: "Stable",
-        color: "text-blue-300",
+        name: "mongodb_etl_pipeline.js",
+        size: "18 KB",
+        date: "2024-11-10",
+        desc: "High-performance MongoDB ETL pipeline for processing patient feedback with sentiment analysis and task generation.",
+        tech: ["MongoDB Aggregation", "Node.js", "TypeScript", "ETL"],
+        status: "Production",
+        color: "text-emerald-400",
       },
+
       {
-        name: "deploy_script.sh",
-        size: "4 KB",
-        date: "2024-05-01",
-        desc: "Automated CI/CD pipeline configuration generator.",
-        tech: ["Bash", "Jenkins", "AWS"],
+        name: "swagger_documentation.yaml",
+        size: "15 KB",
+        date: "2024-11-10",
+        desc: "OpenAPI documentation for Tickmark.io backend APIs covering authentication, scheduling and team management.",
+        tech: ["OpenAPI", "Swagger", "YAML"],
+        status: "Documentation",
+        color: "text-sky-400",
+      },
+
+      {
+        name: "agenda_cron_service.js",
+        size: "7 KB",
+        date: "2024-11-15",
+        desc: "Timezone-aware cron service for managing meeting reminders and schedule expiration in Tickmark's Agenda module.",
+        tech: ["Node.js", "Cron", "MongoDB"],
         status: "Utility",
-        color: "text-gray-400",
+        color: "text-gray-300",
       },
     ],
   },
 };
 
-// --- SUB-COMPONENTS FOR NEW VIEWS ---
+// const DashboardView = () => (
+//   <div className="p-6 space-y-6 h-full overflow-y-auto custom-scrollbar">
+//     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+//       {/* CPU WIDGET */}
+//       <div className="bg-[#111] border border-white/10 p-4 rounded-lg relative overflow-hidden group">
+//         <div className="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 transition-opacity">
+//            <Cpu size={40} className="text-blue-500" />
+//         </div>
+//         <h3 className="text-xs text-gray-500 uppercase tracking-widest mb-2">CPU_Load</h3>
+//         <div className="text-2xl font-bold text-white mb-4">34% <span className="text-xs text-gray-500 font-normal">/ 3.2GHz</span></div>
+//         <div className="flex items-end gap-1 h-12 w-full">
+//            {[40, 60, 30, 80, 50, 20, 45, 70, 30, 55, 40, 25].map((h, i) => (
+//              <div key={i} style={{ height: `${h}%` }} className="flex-1 bg-blue-500/20 hover:bg-blue-500/60 transition-colors rounded-sm"></div>
+//            ))}
+//         </div>
+//       </div>
 
-const DashboardView = () => (
-  <div className="p-6 space-y-6 h-full overflow-y-auto custom-scrollbar">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {/* CPU WIDGET */}
-      <div className="bg-[#111] border border-white/10 p-4 rounded-lg relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 transition-opacity">
-           <Cpu size={40} className="text-blue-500" />
-        </div>
-        <h3 className="text-xs text-gray-500 uppercase tracking-widest mb-2">CPU_Load</h3>
-        <div className="text-2xl font-bold text-white mb-4">34% <span className="text-xs text-gray-500 font-normal">/ 3.2GHz</span></div>
-        <div className="flex items-end gap-1 h-12 w-full">
-           {[40, 60, 30, 80, 50, 20, 45, 70, 30, 55, 40, 25].map((h, i) => (
-             <div key={i} style={{ height: `${h}%` }} className="flex-1 bg-blue-500/20 hover:bg-blue-500/60 transition-colors rounded-sm"></div>
-           ))}
-        </div>
-      </div>
+//       {/* MEMORY WIDGET */}
+//       <div className="bg-[#111] border border-white/10 p-4 rounded-lg relative overflow-hidden group">
+//         <div className="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 transition-opacity">
+//            <HardDrive size={40} className="text-purple-500" />
+//         </div>
+//         <h3 className="text-xs text-gray-500 uppercase tracking-widest mb-2">Memory</h3>
+//         <div className="text-2xl font-bold text-white mb-4">12.4GB <span className="text-xs text-gray-500 font-normal">/ 16GB</span></div>
+//         <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden mb-2">
+//            <div className="h-full w-[78%] bg-purple-500"></div>
+//         </div>
+//         <div className="flex justify-between text-[10px] text-gray-500">
+//            <span>Used: 78%</span>
+//            <span>Cached: 1.2GB</span>
+//         </div>
+//       </div>
 
-      {/* MEMORY WIDGET */}
-      <div className="bg-[#111] border border-white/10 p-4 rounded-lg relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 transition-opacity">
-           <HardDrive size={40} className="text-purple-500" />
-        </div>
-        <h3 className="text-xs text-gray-500 uppercase tracking-widest mb-2">Memory</h3>
-        <div className="text-2xl font-bold text-white mb-4">12.4GB <span className="text-xs text-gray-500 font-normal">/ 16GB</span></div>
-        <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden mb-2">
-           <div className="h-full w-[78%] bg-purple-500"></div>
-        </div>
-        <div className="flex justify-between text-[10px] text-gray-500">
-           <span>Used: 78%</span>
-           <span>Cached: 1.2GB</span>
-        </div>
-      </div>
+//        {/* UPTIME WIDGET */}
+//        <div className="bg-[#111] border border-white/10 p-4 rounded-lg relative overflow-hidden group">
+//         <div className="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 transition-opacity">
+//            <Clock size={40} className="text-green-500" />
+//         </div>
+//         <h3 className="text-xs text-gray-500 uppercase tracking-widest mb-2">Sys_Uptime</h3>
+//         <div className="text-2xl font-bold text-white mb-2">14d 2h 12m</div>
+//         <p className="text-[10px] text-gray-500 mb-4">Last reboot: Kernel patch v4.2</p>
+//         <div className="flex items-center gap-2 text-xs text-green-400 bg-green-900/10 py-1 px-2 rounded w-fit border border-green-900/30">
+//            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+//            System Healthy
+//         </div>
+//       </div>
+//     </div>
 
-       {/* UPTIME WIDGET */}
-       <div className="bg-[#111] border border-white/10 p-4 rounded-lg relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 transition-opacity">
-           <Clock size={40} className="text-green-500" />
-        </div>
-        <h3 className="text-xs text-gray-500 uppercase tracking-widest mb-2">Sys_Uptime</h3>
-        <div className="text-2xl font-bold text-white mb-2">14d 2h 12m</div>
-        <p className="text-[10px] text-gray-500 mb-4">Last reboot: Kernel patch v4.2</p>
-        <div className="flex items-center gap-2 text-xs text-green-400 bg-green-900/10 py-1 px-2 rounded w-fit border border-green-900/30">
-           <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
-           System Healthy
-        </div>
-      </div>
-    </div>
+//     {/* SYSTEM LOGS */}
+//     <div className="bg-[#111] border border-white/10 rounded-lg p-4 flex-1">
+//       <div className="flex items-center justify-between mb-4">
+//         <h3 className="text-xs text-gray-500 uppercase tracking-widest flex items-center gap-2">
+//           <Terminal size={14} /> System_Event_Log
+//         </h3>
+//         <span className="text-[10px] text-blue-400 cursor-pointer hover:underline">Clear Logs</span>
+//       </div>
+//       <div className="font-mono text-xs space-y-2 h-48 overflow-y-auto custom-scrollbar p-2 bg-black/40 rounded border border-white/5">
+//         <div className="flex gap-3 text-gray-400">
+//           <span className="text-gray-600">[14:02:22]</span>
+//           <span>Starting daemon process &amp;quot;watcher_v2&amp;quot;...</span>
+//         </div>
+//         <div className="flex gap-3 text-gray-400">
+//           <span className="text-gray-600">[14:02:23]</span>
+//           <span className="text-green-400">Connection established: 192.168.1.42:8080</span>
+//         </div>
+//         <div className="flex gap-3 text-gray-400">
+//           <span className="text-gray-600">[14:03:01]</span>
+//           <span>Cron job &amp;quot;backup_db&amp;quot; executed successfully.</span>
+//         </div>
+//         <div className="flex gap-3 text-gray-400">
+//           <span className="text-gray-600">[14:05:12]</span>
+//           <span className="text-yellow-400">Warning: High memory usage detected on thread #4.</span>
+//         </div>
+//         <div className="flex gap-3 text-gray-400">
+//           <span className="text-gray-600">[14:06:45]</span>
+//           <span>User &amp;quot;Admin&amp;quot; authenticated via SSH key.</span>
+//         </div>
+//         <div className="flex gap-3 text-gray-400">
+//           <span className="text-gray-600">[14:10:00]</span>
+//           <span className="text-blue-400">Package update available: react-scripts@5.0.2</span>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// );
 
-    {/* SYSTEM LOGS */}
-    <div className="bg-[#111] border border-white/10 rounded-lg p-4 flex-1">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xs text-gray-500 uppercase tracking-widest flex items-center gap-2">
-          <Terminal size={14} /> System_Event_Log
-        </h3>
-        <span className="text-[10px] text-blue-400 cursor-pointer hover:underline">Clear Logs</span>
-      </div>
-      <div className="font-mono text-xs space-y-2 h-48 overflow-y-auto custom-scrollbar p-2 bg-black/40 rounded border border-white/5">
-        <div className="flex gap-3 text-gray-400">
-          <span className="text-gray-600">[14:02:22]</span>
-          <span>Starting daemon process "watcher_v2"...</span>
-        </div>
-        <div className="flex gap-3 text-gray-400">
-          <span className="text-gray-600">[14:02:23]</span>
-          <span className="text-green-400">Connection established: 192.168.1.42:8080</span>
-        </div>
-        <div className="flex gap-3 text-gray-400">
-          <span className="text-gray-600">[14:03:01]</span>
-          <span>Cron job "backup_db" executed successfully.</span>
-        </div>
-        <div className="flex gap-3 text-gray-400">
-          <span className="text-gray-600">[14:05:12]</span>
-          <span className="text-yellow-400">Warning: High memory usage detected on thread #4.</span>
-        </div>
-        <div className="flex gap-3 text-gray-400">
-          <span className="text-gray-600">[14:06:45]</span>
-          <span>User "Admin" authenticated via SSH key.</span>
-        </div>
-        <div className="flex gap-3 text-gray-400">
-          <span className="text-gray-600">[14:10:00]</span>
-          <span className="text-blue-400">Package update available: react-scripts@5.0.2</span>
-        </div>
-      </div>
-    </div>
-  </div>
-);
+// const NetworkView = () => (
+//   <div className="p-6 h-full overflow-y-auto custom-scrollbar flex flex-col gap-6">
+//     {/* REGIONAL MAP SIMULATION */}
+//     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//       <div className="bg-[#111] border border-white/10 rounded-lg p-4">
+//         <h3 className="text-xs text-gray-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+//           <Globe size={14} /> Global_Nodes
+//         </h3>
+//         <div className="space-y-3">
+//           {[
+//             { region: "US-East (N. Virginia)", status: "Active", latency: "24ms", color: "text-green-400" },
+//             { region: "EU-West (Ireland)", status: "Active", latency: "88ms", color: "text-green-400" },
+//             { region: "AP-South (Mumbai)", status: "Congested", latency: "142ms", color: "text-yellow-400" },
+//             { region: "SA-East (São Paulo)", status: "Active", latency: "112ms", color: "text-green-400" },
+//           ].map((node, i) => (
+//             <div key={i} className="flex items-center justify-between p-2 hover:bg-white/5 rounded transition-colors border-b border-white/5 last:border-0">
+//                <div className="flex items-center gap-3">
+//                  <div className={`w-2 h-2 rounded-full ${node.color === 'text-green-400' ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
+//                  <span className="text-xs text-gray-300">{node.region}</span>
+//                </div>
+//                <div className="flex items-center gap-4 text-xs font-mono">
+//                   <span className={node.color}>{node.status}</span>
+//                   <span className="text-gray-500 w-12 text-right">{node.latency}</span>
+//                </div>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
 
-const NetworkView = () => (
-  <div className="p-6 h-full overflow-y-auto custom-scrollbar flex flex-col gap-6">
-    {/* REGIONAL MAP SIMULATION */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="bg-[#111] border border-white/10 rounded-lg p-4">
-        <h3 className="text-xs text-gray-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-          <Globe size={14} /> Global_Nodes
-        </h3>
-        <div className="space-y-3">
-          {[
-            { region: "US-East (N. Virginia)", status: "Active", latency: "24ms", color: "text-green-400" },
-            { region: "EU-West (Ireland)", status: "Active", latency: "88ms", color: "text-green-400" },
-            { region: "AP-South (Mumbai)", status: "Congested", latency: "142ms", color: "text-yellow-400" },
-            { region: "SA-East (São Paulo)", status: "Active", latency: "112ms", color: "text-green-400" },
-          ].map((node, i) => (
-            <div key={i} className="flex items-center justify-between p-2 hover:bg-white/5 rounded transition-colors border-b border-white/5 last:border-0">
-               <div className="flex items-center gap-3">
-                 <div className={`w-2 h-2 rounded-full ${node.color === 'text-green-400' ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
-                 <span className="text-xs text-gray-300">{node.region}</span>
-               </div>
-               <div className="flex items-center gap-4 text-xs font-mono">
-                  <span className={node.color}>{node.status}</span>
-                  <span className="text-gray-500 w-12 text-right">{node.latency}</span>
-               </div>
-            </div>
-          ))}
-        </div>
-      </div>
+//       <div className="bg-[#111] border border-white/10 rounded-lg p-4 flex flex-col">
+//          <h3 className="text-xs text-gray-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+//             <Activity size={14} /> Traffic_Analysis
+//          </h3>
+//          <div className="flex-1 flex items-end gap-1 px-2 border-b border-l border-white/10 min-h-[150px] relative">
+//             {/* Grid Lines */}
+//             <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
+//                <div className="w-full h-px bg-white"></div>
+//                <div className="w-full h-px bg-white"></div>
+//                <div className="w-full h-px bg-white"></div>
+//                <div className="w-full h-px bg-white"></div>
+//             </div>
+//             {Array.from({ length: 20 }, (_, i) => {
+//                const height = 20 + (i * 3) % 60 + 10;
+//                return (
+//                  <div
+//                    key={i}
+//                    className="flex-1 bg-cyan-500/30 hover:bg-cyan-400 transition-all duration-300 rounded-t-sm"
+//                    style={{ height: `${height}%` }}
+//                  ></div>
+//                )
+//             })}
+//          </div>
+//          <div className="flex justify-between mt-2 text-[10px] text-gray-500 font-mono">
+//             <span>00:00</span>
+//             <span>12:00</span>
+//             <span>23:59</span>
+//          </div>
+//       </div>
+//     </div>
 
-      <div className="bg-[#111] border border-white/10 rounded-lg p-4 flex flex-col">
-         <h3 className="text-xs text-gray-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-            <Activity size={14} /> Traffic_Analysis
-         </h3>
-         <div className="flex-1 flex items-end gap-1 px-2 border-b border-l border-white/10 min-h-[150px] relative">
-            {/* Grid Lines */}
-            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
-               <div className="w-full h-px bg-white"></div>
-               <div className="w-full h-px bg-white"></div>
-               <div className="w-full h-px bg-white"></div>
-               <div className="w-full h-px bg-white"></div>
-            </div>
-            {Array.from({ length: 20 }).map((_, i) => {
-               const height = Math.floor(Math.random() * 80) + 10;
-               return (
-                 <div 
-                   key={i} 
-                   className="flex-1 bg-cyan-500/30 hover:bg-cyan-400 transition-all duration-300 rounded-t-sm"
-                   style={{ height: `${height}%` }}
-                 ></div>
-               )
-            })}
-         </div>
-         <div className="flex justify-between mt-2 text-[10px] text-gray-500 font-mono">
-            <span>00:00</span>
-            <span>12:00</span>
-            <span>23:59</span>
-         </div>
-      </div>
-    </div>
-
-    {/* SECURITY MODULE */}
-    <div className="bg-[#111] border border-white/10 rounded-lg p-4">
-      <div className="flex items-center justify-between mb-4">
-         <h3 className="text-xs text-gray-500 uppercase tracking-widest flex items-center gap-2">
-            <Shield size={14} /> Firewall_Status
-         </h3>
-         <span className="text-xs text-green-400 border border-green-900/30 bg-green-900/10 px-2 py-0.5 rounded">Active</span>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-         <div className="bg-black/40 p-3 rounded border border-white/5">
-            <span className="text-[10px] text-gray-500 block mb-1">Inbound Rules</span>
-            <span className="text-lg text-white font-mono">1,240</span>
-         </div>
-         <div className="bg-black/40 p-3 rounded border border-white/5">
-            <span className="text-[10px] text-gray-500 block mb-1">Outbound Rules</span>
-            <span className="text-lg text-white font-mono">856</span>
-         </div>
-         <div className="bg-black/40 p-3 rounded border border-white/5">
-            <span className="text-[10px] text-gray-500 block mb-1">Threats Blocked</span>
-            <span className="text-lg text-red-400 font-mono">12</span>
-         </div>
-         <div className="bg-black/40 p-3 rounded border border-white/5">
-            <span className="text-[10px] text-gray-500 block mb-1">Proxy Latency</span>
-            <span className="text-lg text-blue-400 font-mono">4ms</span>
-         </div>
-      </div>
-    </div>
-  </div>
-);
-
+//     {/* SECURITY MODULE */}
+//     <div className="bg-[#111] border border-white/10 rounded-lg p-4">
+//       <div className="flex items-center justify-between mb-4">
+//          <h3 className="text-xs text-gray-500 uppercase tracking-widest flex items-center gap-2">
+//             <Shield size={14} /> Firewall_Status
+//          </h3>
+//          <span className="text-xs text-green-400 border border-green-900/30 bg-green-900/10 px-2 py-0.5 rounded">Active</span>
+//       </div>
+//       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+//          <div className="bg-black/40 p-3 rounded border border-white/5">
+//             <span className="text-[10px] text-gray-500 block mb-1">Inbound Rules</span>
+//             <span className="text-lg text-white font-mono">1,240</span>
+//          </div>
+//          <div className="bg-black/40 p-3 rounded border border-white/5">
+//             <span className="text-[10px] text-gray-500 block mb-1">Outbound Rules</span>
+//             <span className="text-lg text-white font-mono">856</span>
+//          </div>
+//          <div className="bg-black/40 p-3 rounded border border-white/5">
+//             <span className="text-[10px] text-gray-500 block mb-1">Threats Blocked</span>
+//             <span className="text-lg text-red-400 font-mono">12</span>
+//          </div>
+//          <div className="bg-black/40 p-3 rounded border border-white/5">
+//             <span className="text-[10px] text-gray-500 block mb-1">Proxy Latency</span>
+//             <span className="text-lg text-blue-400 font-mono">4ms</span>
+//          </div>
+//       </div>
+//     </div>
+//   </div>
+// );
 
 const Projects = () => {
   // Supports: 'dashboard', 'network', 'fullstack', 'ai_ml', 'mobile', 'tools'
-  const [activeFolder, setActiveFolder] = useState("dashboard"); 
+  const [activeFolder, setActiveFolder] = useState("fullstack");
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [mounted, setMounted] = useState(false);
   const [viewTransition, setViewTransition] = useState(false);
-  
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [isInView, setIsInView] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+
   // Trigger initial mount animation
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 100);
@@ -1235,95 +1708,157 @@ const Projects = () => {
 
   // Trigger view transition animation
   useEffect(() => {
-    setViewTransition(true);
-    const timer = setTimeout(() => setViewTransition(false), 300);
-    return () => clearTimeout(timer);
+    const startTimer = setTimeout(() => setViewTransition(true), 0);
+    const endTimer = setTimeout(() => setViewTransition(false), 300);
+    return () => {
+      clearTimeout(startTimer);
+      clearTimeout(endTimer);
+    };
   }, [activeFolder]);
 
-  const handleFolderClick = (folderId) => {
+  // Section visibility observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { threshold: 0.3 }
+    );
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Keyboard shortcuts (only when section is in view)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isInView && (e.metaKey || e.ctrlKey) && e.key === "f") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isInView]);
+
+  const handleFolderClick = (folderId: string) => {
     if (folderId === activeFolder) return;
     setActiveFolder(folderId);
   };
 
   // Get Current Folder Title
   const getBreadcrumb = () => {
-     if (activeFolder === 'dashboard') return 'System_Dashboard';
-     if (activeFolder === 'network') return 'Network_Topology';
-     return systemData.root.find(f => f.id === activeFolder)?.name || activeFolder;
+    //  if (activeFolder === 'dashboard') return 'System_Dashboard';
+    //  if (activeFolder === 'network') return 'Network_Topology';
+    return (
+      systemData.root.find((f) => f.id === activeFolder)?.name || activeFolder
+    );
   };
 
   // Helper to render main content
   const renderMainContent = () => {
-    if (activeFolder === 'dashboard') return <DashboardView />;
-    if (activeFolder === 'network') return <NetworkView />;
-    
+    // if (activeFolder === 'dashboard') return <DashboardView />;
+    // if (activeFolder === 'network') return <NetworkView />;
+
     // Default: File Grid for Folders
-    const currentFiles = systemData.files[activeFolder] || [];
-    
+    const allFiles =
+      systemData.files[activeFolder as keyof typeof systemData.files] || [];
+    const currentFiles = searchQuery
+      ? allFiles.filter(
+          (file) =>
+            file.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            file.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            file.tech.some((tech) =>
+              tech.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+        )
+      : allFiles;
+
     return (
-        <div className="flex-1 p-6 overflow-y-auto custom-scrollbar">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {currentFiles.map((file, idx) => (
-              <div
-                key={file.name + idx}
-                className={`group relative bg-[#111] hover:bg-[#161616] border border-white/5 hover:border-white/20 p-4 rounded-lg transition-all duration-500 cursor-pointer overflow-hidden interactive transform ${viewTransition ? 'opacity-0 translate-y-4 scale-95' : 'opacity-100 translate-y-0 scale-100'}`}
-                style={{ transitionDelay: `${idx * 100}ms` }}
-              >
-                {/* Hover Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 pointer-events-none" />
+      <div className="flex-1 p-6 overflow-y-auto custom-scrollbar">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {currentFiles.map((file, idx) => (
+            <div
+              key={file.name + idx}
+              className={`group relative bg-[#111] hover:bg-[#161616] border border-white/5 hover:border-white/20 p-4 rounded-lg transition-all duration-500 cursor-pointer overflow-hidden interactive transform ${
+                viewTransition
+                  ? "opacity-0 translate-y-4 scale-95"
+                  : "opacity-100 translate-y-0 scale-100"
+              }`}
+              style={{ transitionDelay: `${idx * 100}ms` }}
+            >
+              {/* Hover Glow Effect */}
+              <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
 
-                <div className="flex items-start gap-4 relative z-10">
-                  <div className="mt-1 p-3 bg-black border border-white/10 rounded-md shadow-inner group-hover:border-blue-500/30 transition-colors">
-                     <FileCode size={24} className={`${file.color}`} />
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className={`text-sm font-bold truncate ${file.color} group-hover:underline`}>
-                        {file.name}
-                      </h4>
-                      <span className="text-[10px] text-gray-600 font-mono border border-gray-800 px-1.5 rounded bg-black">
-                        {file.size}
-                      </span>
-                    </div>
-                    
-                    <p className="text-xs text-gray-400 mb-3 line-clamp-2 leading-relaxed">
-                      {file.desc}
-                    </p>
-
-                    <div className="flex items-center gap-2 flex-wrap">
-                       {file.tech.map((t, i) => (
-                         <span key={i} className="text-[10px] text-gray-500 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">
-                           {t}
-                         </span>
-                       ))}
-                    </div>
-                  </div>
+              <div className="flex items-start gap-4 relative z-10">
+                <div className="mt-1 p-3 bg-black border border-white/10 rounded-md shadow-inner group-hover:border-blue-500/30 transition-colors">
+                  <FileCode size={24} className={`${file.color}`} />
                 </div>
 
-                {/* Metadata Footer */}
-                <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[10px] text-gray-600 font-mono">
-                  <span>Updated: {file.date}</span>
-                  <div className="flex items-center gap-1.5">
-                     <div className={`w-1.5 h-1.5 rounded-full ${file.status === 'Production' ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
-                     <span>{file.status}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <h4
+                      className={`text-sm font-bold truncate ${file.color} group-hover:underline`}
+                    >
+                      {file.name}
+                    </h4>
+                    <span className="text-[10px] text-gray-600 font-mono border border-gray-800 px-1.5 rounded bg-black">
+                      {file.size}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-gray-400 mb-3 line-clamp-2 leading-relaxed">
+                    {file.desc}
+                  </p>
+
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {file.tech.map((t, i) => (
+                      <span
+                        key={i}
+                        className="text-[10px] text-gray-500 bg-white/5 px-1.5 py-0.5 rounded border border-white/5"
+                      >
+                        {t}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-          
-          <div className={`mt-8 text-center transition-opacity duration-500 ${viewTransition ? 'opacity-0' : 'opacity-30'}`}>
-             <p className="text-[10px] text-gray-500 font-mono">-- END OF DIRECTORY --</p>
-             <p className="text-[10px] text-gray-600">{currentFiles.length} object(s)</p>
-          </div>
+
+              {/* Metadata Footer */}
+              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[10px] text-gray-600 font-mono">
+                <span>Updated: {file.date}</span>
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      file.status === "Production"
+                        ? "bg-green-500"
+                        : "bg-yellow-500"
+                    }`}
+                  ></div>
+                  <span>{file.status}</span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
+
+        <div
+          className={`mt-8 text-center transition-opacity duration-500 ${
+            viewTransition ? "opacity-0" : "opacity-30"
+          }`}
+        >
+          <p className="text-[10px] text-gray-500 font-mono">
+            -- END OF DIRECTORY --
+          </p>
+          <p className="text-[10px] text-gray-600">
+            {currentFiles.length} object(s)
+          </p>
+        </div>
+      </div>
     );
   };
 
   return (
     <section
       id="projects"
+      ref={sectionRef}
       className="bg-[#050505] py-24 px-4 md:px-8 relative overflow-hidden min-h-screen flex flex-col items-center justify-center font-mono"
     >
       {/* Background Gradient Lines */}
@@ -1331,32 +1866,46 @@ const Projects = () => {
         {[...Array(6)].map((_, i) => (
           <motion.div
             key={`h-${i}`}
-            className="absolute h-[1px] bg-gradient-to-r from-transparent via-pink-500/20 to-transparent w-full"
+            className="absolute h-px bg-linear-to-r from-transparent via-pink-500/20 to-transparent w-full"
             style={{ top: `${10 + i * 15}%` }}
-            animate={{ x: ['-100%', '100%'] }}
-            transition={{ duration: 14 + i * 2, repeat: Infinity, ease: "linear" }}
+            animate={{ x: ["-100%", "100%"] }}
+            transition={{
+              duration: 14 + i * 2,
+              repeat: Infinity,
+              ease: "linear",
+            }}
           />
         ))}
         {[...Array(6)].map((_, i) => (
           <motion.div
             key={`v-${i}`}
-            className="absolute w-[1px] bg-gradient-to-b from-transparent via-purple-500/20 to-transparent h-full"
+            className="absolute w-px bg-linear-to-b from-transparent via-purple-500/20 to-transparent h-full"
             style={{ left: `${10 + i * 15}%` }}
-            animate={{ y: ['-100%', '100%'] }}
-            transition={{ duration: 18 + i * 2, repeat: Infinity, ease: "linear", delay: i * 0.4 }}
+            animate={{ y: ["-100%", "100%"] }}
+            transition={{
+              duration: 18 + i * 2,
+              repeat: Infinity,
+              ease: "linear",
+              delay: i * 0.4,
+            }}
           />
         ))}
       </div>
       {/* Section Shadow Overlays */}
-      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#050505] via-[#050505]/50 to-transparent pointer-events-none z-[1]"></div>
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black via-black/50 to-transparent pointer-events-none z-[1]"></div>
+      <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-b from-[#050505] via-[#050505]/50 to-transparent pointer-events-none z-1"></div>
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-linear-to-t from-black via-black/50 to-transparent pointer-events-none z-1"></div>
       {/* Background Grid Decoration */}
-      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" 
-           style={{ backgroundImage: 'linear-gradient(#1a1a1a 1px, transparent 1px), linear-gradient(90deg, #1a1a1a 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
-      </div>
+      <div
+        className="absolute inset-0 z-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(#1a1a1a 1px, transparent 1px), linear-gradient(90deg, #1a1a1a 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      ></div>
 
       {/* TITLE SECTION */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
@@ -1367,20 +1916,26 @@ const Projects = () => {
           <Folder className="text-cyan-400" size={32} />
           <h2 className="text-4xl md:text-5xl font-bold">
             <span className="text-white">PROJECT_</span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">ARCHIVE</span>
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-500">
+              ARCHIVE
+            </span>
           </h2>
         </div>
         <p className="text-gray-500 text-sm md:text-base max-w-2xl mx-auto">
-          Browse my system directories to explore full-stack applications, AI models, and developer tools
+          Browse my system directories to explore full-stack applications, AI
+          models, and developer tools
         </p>
       </motion.div>
 
       {/* --- MAIN OS WINDOW --- */}
-      <div 
-        className={`relative z-10 w-full max-w-6xl bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col h-[700px] md:h-[600px] transition-all duration-1000 ease-out ${mounted ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-20 scale-95'}`}
-        style={{ boxShadow: '0 0 50px -12px rgba(0, 255, 128, 0.1)' }}
+      <div
+        className={`relative z-10 w-full max-w-6xl bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col h-[80vh] transition-all duration-1000 ease-out ${
+          mounted
+            ? "opacity-100 translate-y-0 scale-100"
+            : "opacity-0 translate-y-20 scale-95"
+        }`}
+        style={{ boxShadow: "0 0 50px -12px rgba(0, 255, 128, 0.1)" }}
       >
-        
         {/* WINDOW TITLE BAR */}
         <div className="bg-[#111] border-b border-white/5 p-3 flex items-center justify-between select-none">
           <div className="flex items-center gap-2 px-2">
@@ -1390,70 +1945,77 @@ const Projects = () => {
               <div className="w-3 h-3 rounded-full bg-green-500/80 hover:bg-green-500 transition-colors cursor-pointer shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
             </div>
             <span className="text-gray-400 text-xs tracking-widest uppercase flex items-center gap-2">
-              <HardDrive size={12} className="text-blue-400"/>
-              System_Explorer <span className="text-gray-600">//</span> {getBreadcrumb()}
+              <HardDrive size={12} className="text-blue-400" />
+              System_Explorer <span className="text-gray-600">//</span>{" "}
+              {getBreadcrumb()}
             </span>
           </div>
-          
-          <div className="hidden md:flex bg-[#000] border border-white/10 rounded px-3 py-1 items-center gap-2 w-64">
+
+          <div className="hidden md:flex bg-black border border-white/10 rounded px-3 py-1 items-center gap-2 w-64">
             <Search size={12} className="text-gray-500" />
-            <span className="text-xs text-gray-600">Search system...</span>
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search system..."
+              className="bg-transparent border-none outline-none text-xs text-white placeholder-gray-600 flex-1"
+            />
           </div>
         </div>
 
         {/* WINDOW CONTENT */}
         <div className="flex flex-1 overflow-hidden">
-          
           {/* SIDEBAR NAVIGATION */}
-          <div className={`w-16 md:w-64 bg-[#080808] border-r border-white/5 flex flex-col justify-between transition-all duration-300 ${isSidebarOpen ? '' : 'md:w-0 md:opacity-0 md:overflow-hidden'}`}>
+          <div
+            className={`w-16 md:w-64 bg-[#080808] border-r border-white/5 flex flex-col justify-between transition-all duration-300 ${
+              isSidebarOpen ? "" : "md:w-0 md:opacity-0 md:overflow-hidden"
+            }`}
+          >
             <div className="p-4 space-y-6">
               {/* Favorites Group */}
-              <div>
-                <h3 className="hidden md:block text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3 pl-2">Favorites</h3>
-                <div className="space-y-1">
-                   {/* DASHBOARD LINK */}
-                   <div 
-                     onClick={() => handleFolderClick('dashboard')}
-                     className={`flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-all duration-500 delay-100 group border border-transparent ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'} ${activeFolder === 'dashboard' ? "bg-purple-500/10 text-purple-400 border-purple-500/20 shadow-[inset_0_0_10px_rgba(168,85,247,0.1)]" : "text-gray-400 hover:bg-white/5 hover:text-white"}`}
-                   >
-                      <Layout size={16} className={`${activeFolder === 'dashboard' ? "text-purple-400" : "text-purple-400 group-hover:scale-110"} transition-transform`} />
-                      <span className="hidden md:block text-xs font-medium tracking-wide">Dashboard</span>
-                   </div>
-                   
-                   {/* NETWORK LINK */}
-                   <div 
-                     onClick={() => handleFolderClick('network')}
-                     className={`flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-all duration-500 delay-200 group border border-transparent ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'} ${activeFolder === 'network' ? "bg-blue-500/10 text-blue-400 border-blue-500/20 shadow-[inset_0_0_10px_rgba(59,130,246,0.1)]" : "text-gray-400 hover:bg-white/5 hover:text-white"}`}
-                   >
-                      <Globe size={16} className={`${activeFolder === 'network' ? "text-blue-400" : "text-blue-400 group-hover:scale-110"} transition-transform`} />
-                      <span className="hidden md:block text-xs font-medium tracking-wide">Network</span>
-                   </div>
-                </div>
-              </div>
 
               {/* Locations Group (Folders) */}
               <div>
-                <h3 className="hidden md:block text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3 pl-2">Locations</h3>
+                <h3 className="hidden md:block text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3 pl-2">
+                  Locations
+                </h3>
                 <div className="space-y-1">
                   {systemData.root.map((folder, index) => {
                     const Icon = folder.icon;
                     const isActive = activeFolder === folder.id;
-                    const delayClass = index === 0 ? 'delay-[300ms]' : index === 1 ? 'delay-[400ms]' : index === 2 ? 'delay-[500ms]' : 'delay-[600ms]';
-                    
+                    const delayClass =
+                      index === 0
+                        ? "delay-[300ms]"
+                        : index === 1
+                        ? "delay-[400ms]"
+                        : index === 2
+                        ? "delay-[500ms]"
+                        : "delay-[600ms]";
+
                     return (
                       <div
                         key={folder.id}
                         onClick={() => handleFolderClick(folder.id)}
                         className={`flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-all duration-500 border border-transparent ${delayClass} ${
-                          mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'
+                          mounted
+                            ? "opacity-100 translate-x-0"
+                            : "opacity-0 -translate-x-4"
                         } ${
-                          isActive 
-                            ? "bg-gray-800 text-white border-white/10" 
+                          isActive
+                            ? "bg-gray-800 text-white border-white/10"
                             : "text-gray-400 hover:bg-white/5 hover:text-white"
                         }`}
                       >
-                        <Icon size={16} className={`${isActive ? "text-white" : "text-gray-500"}`} />
-                        <span className="hidden md:block text-xs font-medium tracking-wide">{folder.name}</span>
+                        <Icon
+                          size={16}
+                          className={`${
+                            isActive ? "text-white" : "text-gray-500"
+                          }`}
+                        />
+                        <span className="hidden md:block text-xs font-medium tracking-wide">
+                          {folder.name}
+                        </span>
                       </div>
                     );
                   })}
@@ -1462,7 +2024,7 @@ const Projects = () => {
             </div>
 
             {/* Storage Info Footer */}
-            <div className={`p-4 border-t border-white/5 hidden md:block transition-opacity duration-1000 delay-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+            {/* <div className={`p-4 border-t border-white/5 hidden md:block transition-opacity duration-1000 delay-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
               <div className="flex justify-between text-[10px] text-gray-400 mb-1">
                 <span>Storage</span>
                 <span>74%</span>
@@ -1470,60 +2032,81 @@ const Projects = () => {
               <div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
                 <div className="h-full w-[74%] bg-gradient-to-r from-blue-500 to-green-400"></div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* MAIN EXPLORER AREA */}
           <div className="flex-1 bg-[#0c0c0c] flex flex-col relative">
-            
             {/* Address Bar / Breadcrumbs */}
             <div className="h-12 border-b border-white/5 flex items-center px-4 gap-2 bg-[#0a0a0a]">
-               <div 
-                 onClick={() => setSidebarOpen(!isSidebarOpen)}
-                 className="md:hidden mr-2 text-gray-400 p-1 border border-white/10 rounded cursor-pointer"
-               >
-                 <Layout size={14} />
-               </div>
-               <div className="flex items-center text-xs text-gray-500">
-                  <span className="hover:text-white cursor-pointer transition-colors">root</span>
-                  <ChevronRight size={12} className="mx-1" />
-                  <span className="hover:text-white cursor-pointer transition-colors">system</span>
-                  <ChevronRight size={12} className="mx-1" />
-                  <span className={`${activeFolder === 'dashboard' ? "text-purple-400 bg-purple-400/10 border-purple-400/20" : activeFolder === 'network' ? "text-blue-400 bg-blue-400/10 border-blue-400/20" : "text-gray-300 bg-gray-800 border-gray-700"} px-2 py-0.5 rounded border`}>
-                    {getBreadcrumb()}
-                  </span>
-               </div>
-               <div className="ml-auto flex gap-2">
-                 <div className="p-1.5 hover:bg-white/5 rounded text-gray-500 cursor-pointer">
-                    <Layout size={14} />
-                 </div>
-               </div>
+              <div
+                onClick={() => setSidebarOpen(!isSidebarOpen)}
+                className="md:hidden mr-2 text-gray-400 p-1 border border-white/10 rounded cursor-pointer"
+              >
+                <Layout size={14} />
+              </div>
+              <div className="flex items-center text-xs text-gray-500">
+                <span className="hover:text-white cursor-pointer transition-colors">
+                  root
+                </span>
+                <ChevronRight size={12} className="mx-1" />
+                <span className="hover:text-white cursor-pointer transition-colors">
+                  system
+                </span>
+                <ChevronRight size={12} className="mx-1" />
+                <span
+                  className={`${
+                    activeFolder === "dashboard"
+                      ? "text-purple-400 bg-purple-400/10 border-purple-400/20"
+                      : activeFolder === "network"
+                      ? "text-blue-400 bg-blue-400/10 border-blue-400/20"
+                      : "text-gray-300 bg-gray-800 border-gray-700"
+                  } px-2 py-0.5 rounded border`}
+                >
+                  {getBreadcrumb()}
+                </span>
+              </div>
+              <div className="ml-auto flex gap-2">
+                <div className="p-1.5 hover:bg-white/5 rounded text-gray-500 cursor-pointer">
+                  <Layout size={14} />
+                </div>
+              </div>
             </div>
 
             {/* Content Area Switcher */}
-            <div className={`flex-1 overflow-hidden transition-opacity duration-300 ${viewTransition ? 'opacity-50' : 'opacity-100'}`}>
-               {renderMainContent()}
+            <div
+              className={`flex-1 overflow-y-auto custom-scrollbar transition-opacity duration-300 ${
+                viewTransition ? "opacity-50" : "opacity-100"
+              }`}
+            >
+              {renderMainContent()}
             </div>
 
             {/* Bottom Status Bar */}
             <div className="bg-[#080808] border-t border-white/5 px-4 py-1 flex justify-between items-center text-[10px] text-gray-500 font-mono select-none">
-               <div className="flex gap-4">
-                  <span className="hover:text-white cursor-pointer">READ-ONLY</span>
-                  <span className="hover:text-white cursor-pointer">UTF-8</span>
-               </div>
-               <div className="flex gap-2 items-center">
-                  <div className={`w-2 h-2 rounded-full ${activeFolder === 'network' ? 'bg-blue-500' : 'bg-green-500'} animate-pulse`}></div>
-                  <span>{activeFolder === 'network' ? 'NET_ACTIVE' : 'SYSTEM ONLINE'}</span>
-               </div>
+              <div className="flex gap-4">
+                <span className="hover:text-white cursor-pointer">
+                  READ-ONLY
+                </span>
+                <span className="hover:text-white cursor-pointer">UTF-8</span>
+              </div>
+              <div className="flex gap-2 items-center">
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    activeFolder === "network" ? "bg-blue-500" : "bg-green-500"
+                  } animate-pulse`}
+                ></div>
+                <span>
+                  {activeFolder === "network" ? "NET_ACTIVE" : "SYSTEM ONLINE"}
+                </span>
+              </div>
             </div>
-
           </div>
         </div>
       </div>
     </section>
   );
 };
-
 
 // --- 7. DEVELOPER CONTACT FORM ---
 const ContactForm = () => {
@@ -1537,18 +2120,21 @@ const ContactForm = () => {
   const containerRef = useRef(null);
   const formRef = useRef(null);
 
-  useGSAP(() => {
-    gsap.from(formRef.current, {
-      scrollTrigger: {
-        trigger: formRef.current,
-        start: "top 70%",
-      },
-      y: 50,
-      opacity: 0,
-      duration: 1,
-      ease: "power3.out",
-    });
-  }, { scope: containerRef });
+  useGSAP(
+    () => {
+      gsap.from(formRef.current, {
+        scrollTrigger: {
+          trigger: formRef.current,
+          start: "top 70%",
+        },
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+      });
+    },
+    { scope: containerRef }
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1562,62 +2148,80 @@ const ContactForm = () => {
   };
 
   return (
-    <section id="contact" ref={containerRef} className="py-32 bg-black relative overflow-hidden">
+    <section
+      id="contact"
+      ref={containerRef}
+      className="py-32 bg-black relative overflow-hidden"
+    >
       {/* Background Gradient Lines */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(5)].map((_, i) => (
           <motion.div
             key={`h-${i}`}
-            className="absolute h-[1px] bg-gradient-to-r from-transparent via-blue-500/20 to-transparent w-full"
+            className="absolute h-px bg-linear-to-r from-transparent via-blue-500/20 to-transparent w-full"
             style={{ top: `${15 + i * 18}%` }}
-            animate={{ x: ['-100%', '100%'] }}
-            transition={{ duration: 11 + i * 2, repeat: Infinity, ease: "linear" }}
+            animate={{ x: ["-100%", "100%"] }}
+            transition={{
+              duration: 11 + i * 2,
+              repeat: Infinity,
+              ease: "linear",
+            }}
           />
         ))}
         {[...Array(5)].map((_, i) => (
           <motion.div
             key={`v-${i}`}
-            className="absolute w-[1px] bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent h-full"
+            className="absolute w-px bg-linear-to-b from-transparent via-cyan-500/20 to-transparent h-full"
             style={{ left: `${15 + i * 18}%` }}
-            animate={{ y: ['-100%', '100%'] }}
-            transition={{ duration: 15 + i * 2, repeat: Infinity, ease: "linear", delay: i * 0.4 }}
+            animate={{ y: ["-100%", "100%"] }}
+            transition={{
+              duration: 15 + i * 2,
+              repeat: Infinity,
+              ease: "linear",
+              delay: i * 0.4,
+            }}
           />
         ))}
       </div>
       {/* Section Shadow Overlays */}
-      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#050505] via-[#050505]/50 to-transparent pointer-events-none z-[1]"></div>
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black via-black/50 to-transparent pointer-events-none z-[1]"></div>
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-900 to-transparent"></div>
+      <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-b from-[#050505] via-[#050505]/50 to-transparent pointer-events-none z-1"></div>
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-linear-to-t from-black via-black/50 to-transparent pointer-events-none z-1"></div>
+      <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-cyan-900 to-transparent"></div>
       <div className="max-w-6xl mx-auto px-4 md:px-10 relative z-10 grid lg:grid-cols-2 gap-16 items-center">
         <div>
           <h2 className="text-6xl font-bold text-white mb-6">
-            Let's <span className="text-cyan-400">Execute</span>
+            {`Let's `}
+            <span className="text-cyan-400">Execute</span>
             <br />
-            New Ideas.
+            {`New Ideas.`}
           </h2>
           <p className="text-gray-400 text-lg mb-12 max-w-md">
             Have a project in mind? Send me a git push request (or just a
             message).
           </p>
           <div className="space-y-6">
-            <a
-              href="#"
+            <Link
+              href="mailto:sahilbhullar44@gmail.com"
               className="flex items-center gap-4 text-white/80 hover:text-cyan-400 transition-colors interactive group"
             >
               <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-cyan-400/50 transition-colors">
                 <Mail size={20} />
               </div>
-              <span className="font-mono text-lg">hello@dev.io</span>
-            </a>
-            <a
-              href="#"
+              <span className="font-mono text-lg">
+                sahilbhullar44@gmail.com
+              </span>
+            </Link>
+            <Link
+              href="https://www.linkedin.com/in/sahilpreet-singh-3042b02a5/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-4 text-white/80 hover:text-cyan-400 transition-colors interactive group"
             >
               <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-cyan-400/50 transition-colors">
-                <Github size={20} />
+                <Linkedin size={20} />
               </div>
-              <span className="font-mono text-lg">github.com/dev</span>
-            </a>
+              <span className="font-mono text-lg">LinkedIn Profile</span>
+            </Link>
           </div>
         </div>
         <div
@@ -1650,7 +2254,7 @@ const ContactForm = () => {
                   <span className="text-purple-400">const</span>
                   <span className="text-blue-400">sender</span>
                   <span className="text-white">=</span>
-                  <span className="text-gray-400">"</span>
+                  <span className="text-gray-400"></span>
                   <input
                     type="text"
                     required
@@ -1661,7 +2265,7 @@ const ContactForm = () => {
                     placeholder="Your Name"
                     className="bg-transparent border-none outline-none text-green-400 placeholder-gray-600 min-w-[150px] flex-1 interactive focus:ring-0 p-0"
                   />
-                  <span className="text-gray-400">";</span>
+                  <span className="text-gray-400">;</span>
                 </div>
               </div>
               <div className="group">
@@ -1669,7 +2273,7 @@ const ContactForm = () => {
                   <span className="text-purple-400">const</span>
                   <span className="text-blue-400">email</span>
                   <span className="text-white">=</span>
-                  <span className="text-gray-400">"</span>
+                  <span className="text-gray-400"></span>
                   <input
                     type="email"
                     required
@@ -1680,7 +2284,7 @@ const ContactForm = () => {
                     placeholder="your@email.com"
                     className="bg-transparent border-none outline-none text-green-400 placeholder-gray-600 min-w-[150px] flex-1 interactive focus:ring-0 p-0"
                   />
-                  <span className="text-gray-400">";</span>
+                  <span className="text-gray-400">;</span>
                 </div>
               </div>
               <div className="group">
@@ -1740,10 +2344,12 @@ const Footer = () => (
     <div className="max-w-6xl mx-auto px-4 md:px-10 flex flex-col md:flex-row justify-between items-center gap-4">
       <div className="flex items-center gap-4">
         <span className="font-mono font-bold text-lg tracking-tight">
-          DEV.IO
+          Sahilpreet Singh
         </span>
         <span className="text-white/20 text-xs">|</span>
-        <span className="text-xs font-mono text-gray-500">© 2024 INC.</span>
+        <span className="text-xs font-mono text-gray-500">
+          © {new Date().getFullYear()} INC.
+        </span>{" "}
       </div>
       <div className="flex items-center gap-2 text-xs font-mono text-gray-500">
         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
@@ -1785,7 +2391,7 @@ const App = () => {
           </motion.main>
         )}
       </AnimatePresence>
-      
+
       {!isLoading && <Footer />}
     </div>
   );

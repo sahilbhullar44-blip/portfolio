@@ -19,10 +19,14 @@ export async function getSystemSpecs() {
       cpuModel: cleanModel,
       threads: threads,
     };
-  } catch (error) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_error) {
     return {
       cpuModel: "UNKNOWN SYSTEM",
       threads: 4,
     };
   }
 }
+
+
+
