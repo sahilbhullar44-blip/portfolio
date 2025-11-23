@@ -26,6 +26,8 @@ import {
   Search,
   Smartphone,
   Server,
+  X,
+  Box,
 } from "lucide-react";
 
 import { getSystemSpecs } from "@/app/actions";
@@ -1695,21 +1697,23 @@ const systemData = {
 const Projects = () => {
   // Supports: 'dashboard', 'network', 'fullstack', 'ai_ml', 'mobile', 'tools'
   const [activeFolder, setActiveFolder] = useState("fullstack");
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [isSidebarOpen, setSidebarOpen] = useState(true); // Desktop default
+  const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false); // Mobile default
   const [mounted, setMounted] = useState(false);
   const [viewTransition, setViewTransition] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const [isInView, setIsInView] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
 
-  // Trigger initial mount animation
+  const [isInView, setIsInView] = useState(false);
+  const sectionRef = useRef(null);
+
+  // Initial Mount Animation
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
-  // Trigger view transition animation
+  // View Transition Animation
   useEffect(() => {
     const startTimer = setTimeout(() => setViewTransition(true), 0);
     const endTimer = setTimeout(() => setViewTransition(false), 300);
@@ -1719,17 +1723,17 @@ const Projects = () => {
     };
   }, [activeFolder]);
 
-  // Section visibility observer
+  // Viewport Observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsInView(entry.isIntersecting),
-      { threshold: 0.3 }
+      { threshold: 0.1 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, []);
 
-  // Keyboard shortcuts (only when section is in view)
+  // Keyboard Shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isInView && (e.metaKey || e.ctrlKey) && e.key === "f") {
@@ -1741,26 +1745,21 @@ const Projects = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isInView]);
 
+  // Handle Folder Selection
   const handleFolderClick = (folderId: string) => {
     if (folderId === activeFolder) return;
     setActiveFolder(folderId);
+    setMobileSidebarOpen(false); // Close sidebar on mobile after selection
   };
 
-  // Get Current Folder Title
   const getBreadcrumb = () => {
-    //  if (activeFolder === 'dashboard') return 'System_Dashboard';
-    //  if (activeFolder === 'network') return 'Network_Topology';
     return (
       systemData.root.find((f) => f.id === activeFolder)?.name || activeFolder
     );
   };
 
-  // Helper to render main content
+  // Render File Grid
   const renderMainContent = () => {
-    // if (activeFolder === 'dashboard') return <DashboardView />;
-    // if (activeFolder === 'network') return <NetworkView />;
-
-    // Default: File Grid for Folders
     const allFiles =
       systemData.files[activeFolder as keyof typeof systemData.files] || [];
     const currentFiles = searchQuery
@@ -1775,34 +1774,45 @@ const Projects = () => {
       : allFiles;
 
     return (
-      <div className="flex-1 p-6 overflow-y-auto custom-scrollbar">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="flex-1 p-3 md:p-6 overflow-y-auto custom-scrollbar pb-20">
+        {/* Empty State */}
+        {currentFiles.length === 0 && (
+          <div className="h-full flex flex-col items-center justify-center text-gray-600 opacity-50">
+            <Box size={48} className="mb-4" />
+            <p className="font-mono text-xs">NO OBJECTS FOUND</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
           {currentFiles.map((file, idx) => (
             <div
               key={file.name + idx}
-              className={`group relative bg-[#111] hover:bg-[#161616] border border-white/5 hover:border-white/20 p-4 rounded-lg transition-all duration-500 cursor-pointer overflow-hidden interactive transform ${
+              className={`group relative bg-[#111] hover:bg-[#161616] active:bg-[#1a1a1a] border border-white/5 hover:border-white/20 p-3 md:p-4 rounded-lg transition-all duration-500 cursor-pointer overflow-hidden interactive transform ${
                 viewTransition
                   ? "opacity-0 translate-y-4 scale-95"
                   : "opacity-100 translate-y-0 scale-100"
               }`}
-              style={{ transitionDelay: `${idx * 100}ms` }}
+              style={{ transitionDelay: `${idx * 50}ms` }}
             >
               {/* Hover Glow Effect */}
               <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 pointer-events-none" />
 
-              <div className="flex items-start gap-4 relative z-10">
-                <div className="mt-1 p-3 bg-black border border-white/10 rounded-md shadow-inner group-hover:border-blue-500/30 transition-colors">
-                  <FileCode size={24} className={`${file.color}`} />
+              <div className="flex items-start gap-3 md:gap-4 relative z-10">
+                <div className="mt-1 p-2 md:p-3 bg-black border border-white/10 rounded-md shadow-inner group-hover:border-blue-500/30 transition-colors shrink-0">
+                  <FileCode
+                    size={20}
+                    className={`${file.color} md:w-6 md:h-6`}
+                  />
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center justify-between mb-1 gap-2">
                     <h4
                       className={`text-sm font-bold truncate ${file.color} group-hover:underline`}
                     >
                       {file.name}
                     </h4>
-                    <span className="text-[10px] text-gray-600 font-mono border border-gray-800 px-1.5 rounded bg-black">
+                    <span className="hidden xs:inline-block text-[10px] text-gray-600 font-mono border border-gray-800 px-1.5 rounded bg-black whitespace-nowrap">
                       {file.size}
                     </span>
                   </div>
@@ -1815,7 +1825,7 @@ const Projects = () => {
                     {file.tech.map((t, i) => (
                       <span
                         key={i}
-                        className="text-[10px] text-gray-500 bg-white/5 px-1.5 py-0.5 rounded border border-white/5"
+                        className="text-[10px] text-gray-500 bg-white/5 px-1.5 py-0.5 rounded border border-white/5 whitespace-nowrap"
                       >
                         {t}
                       </span>
@@ -1825,17 +1835,21 @@ const Projects = () => {
               </div>
 
               {/* Metadata Footer */}
-              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[10px] text-gray-600 font-mono">
-                <span>Updated: {file.date}</span>
+              <div className="mt-3 md:mt-4 pt-2 md:pt-3 border-t border-white/5 flex items-center justify-between text-[10px] text-gray-600 font-mono">
+                <span>{file.date}</span>
                 <div className="flex items-center gap-1.5">
                   <div
                     className={`w-1.5 h-1.5 rounded-full ${
-                      file.status === "Production"
+                      file.status === "Production" ||
+                      file.status === "Published" ||
+                      file.status === "Stable"
                         ? "bg-green-500"
                         : "bg-yellow-500"
                     }`}
                   ></div>
-                  <span>{file.status}</span>
+                  <span className="truncate max-w-[80px] sm:max-w-none">
+                    {file.status}
+                  </span>
                 </div>
               </div>
             </div>
@@ -1862,10 +1876,11 @@ const Projects = () => {
     <section
       id="projects"
       ref={sectionRef}
-      className="bg-[#050505] py-24 px-4 md:px-8 relative overflow-hidden min-h-screen flex flex-col items-center justify-center font-mono"
+      className="bg-[#050505] py-8 md:py-24 px-2 md:px-8 relative overflow-hidden min-h-screen flex flex-col items-center justify-center font-mono"
     >
-      {/* Background Gradient Lines */}
+      {/* --- BACKGROUND FX --- */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        {/* Horizontal Lines */}
         {[...Array(6)].map((_, i) => (
           <motion.div
             key={`h-${i}`}
@@ -1879,6 +1894,7 @@ const Projects = () => {
             }}
           />
         ))}
+        {/* Vertical Lines */}
         {[...Array(6)].map((_, i) => (
           <motion.div
             key={`v-${i}`}
@@ -1894,10 +1910,8 @@ const Projects = () => {
           />
         ))}
       </div>
-      {/* Section Shadow Overlays */}
-      <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-b from-[#050505] via-[#050505]/50 to-transparent pointer-events-none z-1"></div>
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-linear-to-t from-black via-black/50 to-transparent pointer-events-none z-1"></div>
-      {/* Background Grid Decoration */}
+
+      {/* Grid Overlay */}
       <div
         className="absolute inset-0 z-0 opacity-20 pointer-events-none"
         style={{
@@ -1907,116 +1921,167 @@ const Projects = () => {
         }}
       ></div>
 
-      {/* TITLE SECTION */}
+      {/* --- TITLE --- */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
-        className="relative z-10 mb-12 text-center"
+        className="relative z-10 mb-6 md:mb-12 text-center px-2"
       >
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <Folder className="text-cyan-400" size={32} />
-          <h2 className="text-4xl md:text-5xl font-bold">
+        <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
+          <Folder className="text-cyan-400 w-6 h-6 md:w-10 md:h-10" />
+          <h2 className="text-2xl min-[360px]:text-3xl md:text-5xl font-bold">
             <span className="text-white">PROJECT_</span>
             <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-500">
               ARCHIVE
             </span>
           </h2>
         </div>
-        <p className="text-gray-500 text-sm md:text-base max-w-2xl mx-auto">
-          Browse my system directories to explore full-stack applications, AI
-          models, and developer tools
+        <p className="text-gray-500 text-xs md:text-base max-w-lg md:max-w-2xl mx-auto leading-relaxed px-4">
+          Secure system access. Browse encrypted directories for full-stack
+          apps, AI models, and tools.
         </p>
       </motion.div>
 
       {/* --- MAIN OS WINDOW --- */}
       <div
-        className={`relative z-10 w-full max-w-6xl bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col h-[80vh] transition-all duration-1000 ease-out ${
+        className={`relative z-10 w-full max-w-6xl bg-[#0a0a0a]/90 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col transition-all duration-1000 ease-out h-[80vh] ${
           mounted
             ? "opacity-100 translate-y-0 scale-100"
             : "opacity-0 translate-y-20 scale-95"
         }`}
         style={{ boxShadow: "0 0 50px -12px rgba(0, 255, 128, 0.1)" }}
       >
-        {/* WINDOW TITLE BAR */}
-        <div className="bg-[#111] border-b border-white/5 p-3 flex items-center justify-between select-none">
-          <div className="flex items-center gap-2 px-2">
-            <div className="flex gap-2 mr-4">
-              <div className="w-3 h-3 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors cursor-pointer shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500/80 hover:bg-yellow-500 transition-colors cursor-pointer shadow-[0_0_8px_rgba(234,179,8,0.6)]" />
-              <div className="w-3 h-3 rounded-full bg-green-500/80 hover:bg-green-500 transition-colors cursor-pointer shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+        {/* 1. WINDOW TITLE BAR (Optimized for 320px) */}
+        <div className="bg-[#111] border-b border-white/5 p-2 flex items-center justify-between select-none shrink-0 z-20 gap-2">
+          {/* Left: Window Controls + Label */}
+          <div className="flex items-center gap-2 px-1 min-w-0">
+            {/* Traffic Lights */}
+            <div className="flex gap-1.5 shrink-0">
+              <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
+              <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-yellow-500/80 hover:bg-yellow-500 transition-colors shadow-[0_0_8px_rgba(234,179,8,0.6)]" />
+              <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-green-500/80 hover:bg-green-500 transition-colors shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
             </div>
-            <span className="text-gray-400 text-xs tracking-widest uppercase flex items-center gap-2">
-              <HardDrive size={12} className="text-blue-400" />
-              System_Explorer <span className="text-gray-600">//</span>{" "}
-              {getBreadcrumb()}
+
+            {/* Title Label (Hides on tiny screens) */}
+            <span className="text-gray-400 text-[10px] md:text-xs tracking-widest uppercase flex items-center gap-2 min-w-0">
+              <HardDrive
+                size={12}
+                className="text-blue-400 shrink-0 hidden min-[360px]:block"
+              />
+              <span className="hidden sm:inline">System_Explorer</span>
+              <span className="hidden sm:inline text-gray-600">//</span>
+              <span className="hidden md:inline max-w-[100px] truncate">
+                {getBreadcrumb()}
+              </span>
             </span>
           </div>
 
-          <div className="hidden md:flex bg-black border border-white/10 rounded px-3 py-1 items-center gap-2 w-64">
-            <Search size={12} className="text-gray-500" />
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search system..."
-              className="bg-transparent border-none outline-none text-xs text-white placeholder-gray-600 flex-1"
-            />
+          {/* Right: Search Bar (Adaptive Width) */}
+          <div className="flex items-center shrink-0">
+            <div className="bg-black border border-white/10 rounded px-2 py-1 flex items-center gap-2 w-28 min-[360px]:w-32 md:w-64 transition-all focus-within:w-36 md:focus-within:w-72 focus-within:border-white/20">
+              <Search size={12} className="text-gray-500 shrink-0" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..."
+                className="bg-transparent border-none outline-none text-[10px] md:text-xs text-white placeholder-gray-600 flex-1 w-full min-w-0"
+              />
+            </div>
           </div>
         </div>
 
-        {/* WINDOW CONTENT */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* SIDEBAR NAVIGATION */}
+        {/* 2. WINDOW CONTENT BODY */}
+        <div className="flex flex-1 overflow-hidden relative">
+          {/* MOBILE SIDEBAR OVERLAY (Click to close) */}
+          <AnimatePresence>
+            {isMobileSidebarOpen && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setMobileSidebarOpen(false)}
+                className="absolute inset-0 bg-black/80 z-20 md:hidden backdrop-blur-sm"
+              />
+            )}
+          </AnimatePresence>
+
+          {/* SIDEBAR NAVIGATION (Adaptive) */}
           <div
-            className={`w-16 md:w-64 bg-[#080808] border-r border-white/5 flex flex-col justify-between transition-all duration-300 ${
-              isSidebarOpen ? "" : "md:w-0 md:opacity-0 md:overflow-hidden"
-            }`}
+            className={`
+                bg-[#080808] border-r border-white/5 flex flex-col justify-between 
+                transition-all duration-300 ease-in-out z-30
+                /* Mobile Styles: Absolute, Drawer behavior */
+                absolute md:relative h-full top-0 left-0
+                ${
+                  isMobileSidebarOpen
+                    ? "translate-x-0 w-[80%] max-w-[250px] shadow-2xl"
+                    : "-translate-x-full w-[80%] max-w-[250px]"
+                }
+                
+                /* Desktop Styles: Relative, Collapse/Expand behavior */
+                md:translate-x-0 
+                ${isSidebarOpen ? "md:w-64" : "md:w-16 md:overflow-hidden"}
+            `}
           >
             <div className="p-4 space-y-6">
-              {/* Favorites Group */}
+              {/* Mobile Close Button */}
+              <div className="md:hidden flex justify-between items-center mb-4 border-b border-white/5 pb-2">
+                <span className="text-gray-500 text-xs font-bold uppercase">
+                  Navigate
+                </span>
+                <button
+                  onClick={() => setMobileSidebarOpen(false)}
+                  className="text-gray-400 p-1 hover:bg-white/10 rounded"
+                >
+                  <X size={18} />
+                </button>
+              </div>
 
               {/* Locations Group (Folders) */}
               <div>
-                <h3 className="hidden md:block text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3 pl-2">
+                <h3
+                  className={`text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3 pl-2 transition-opacity duration-300 ${
+                    !isSidebarOpen && "md:opacity-0"
+                  }`}
+                >
                   Locations
                 </h3>
                 <div className="space-y-1">
-                  {systemData.root.map((folder, index) => {
+                  {systemData.root.map((folder) => {
                     const Icon = folder.icon;
                     const isActive = activeFolder === folder.id;
-                    const delayClass =
-                      index === 0
-                        ? "delay-[300ms]"
-                        : index === 1
-                        ? "delay-[400ms]"
-                        : index === 2
-                        ? "delay-[500ms]"
-                        : "delay-[600ms]";
 
                     return (
                       <div
                         key={folder.id}
                         onClick={() => handleFolderClick(folder.id)}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-all duration-500 border border-transparent ${delayClass} ${
-                          mounted
-                            ? "opacity-100 translate-x-0"
-                            : "opacity-0 -translate-x-4"
-                        } ${
-                          isActive
-                            ? "bg-gray-800 text-white border-white/10"
-                            : "text-gray-400 hover:bg-white/5 hover:text-white"
-                        }`}
+                        className={`
+                          flex items-center gap-3 px-3 py-2.5 rounded-md cursor-pointer transition-all duration-300 border border-transparent 
+                          ${
+                            isActive
+                              ? "bg-gray-800 text-white border-white/10"
+                              : "text-gray-400 hover:bg-white/5 hover:text-white"
+                          }
+                        `}
+                        title={folder.name}
                       >
                         <Icon
-                          size={16}
-                          className={`${
+                          size={18}
+                          className={`shrink-0 ${
                             isActive ? "text-white" : "text-gray-500"
                           }`}
                         />
-                        <span className="hidden md:block text-xs font-medium tracking-wide">
+                        <span
+                          className={`text-xs font-medium tracking-wide whitespace-nowrap transition-opacity duration-300 ${
+                            !isSidebarOpen
+                              ? "md:opacity-0 md:hidden"
+                              : "opacity-100"
+                          }`}
+                        >
                           {folder.name}
                         </span>
                       </div>
@@ -2026,59 +2091,66 @@ const Projects = () => {
               </div>
             </div>
 
-            {/* Storage Info Footer */}
-            {/* <div className={`p-4 border-t border-white/5 hidden md:block transition-opacity duration-1000 delay-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
-              <div className="flex justify-between text-[10px] text-gray-400 mb-1">
-                <span>Storage</span>
-                <span>74%</span>
-              </div>
-              <div className="w-full h-1 bg-gray-800 rounded-full overflow-hidden">
-                <div className="h-full w-[74%] bg-gradient-to-r from-blue-500 to-green-400"></div>
-              </div>
-            </div> */}
+            {/* Desktop Storage Info (Hidden when collapsed) */}
+            <div
+              className={`p-4 border-t border-white/5 hidden md:block transition-all duration-300 ${
+                !isSidebarOpen
+                  ? "opacity-0 translate-y-4 pointer-events-none"
+                  : "opacity-100 translate-y-0"
+              }`}
+            >
+              
+            </div>
           </div>
 
-          {/* MAIN EXPLORER AREA */}
-          <div className="flex-1 bg-[#0c0c0c] flex flex-col relative">
+          {/* MAIN CONTENT AREA */}
+          <div className="flex-1 bg-[#0c0c0c] flex flex-col relative w-full overflow-hidden">
             {/* Address Bar / Breadcrumbs */}
-            <div className="h-12 border-b border-white/5 flex items-center px-4 gap-2 bg-[#0a0a0a]">
+            <div className="h-10 md:h-12 border-b border-white/5 flex items-center px-2 md:px-4 gap-2 bg-[#0a0a0a] shrink-0">
+              {/* Mobile Sidebar Toggle */}
+              <div
+                onClick={() => setMobileSidebarOpen(true)}
+                className="md:hidden mr-1 text-gray-400 p-1.5 border border-white/10 rounded cursor-pointer hover:bg-white/5 active:scale-95 transition-transform shrink-0"
+              >
+                <Layout size={16} />
+              </div>
+
+              {/* Desktop Sidebar Toggle */}
               <div
                 onClick={() => setSidebarOpen(!isSidebarOpen)}
-                className="md:hidden mr-2 text-gray-400 p-1 border border-white/10 rounded cursor-pointer"
+                className="hidden md:block mr-2 text-gray-400 p-1 border border-white/10 rounded cursor-pointer hover:bg-white/5 transition-colors"
               >
                 <Layout size={14} />
               </div>
-              <div className="flex items-center text-xs text-gray-500">
-                <span className="hover:text-white cursor-pointer transition-colors">
+
+              {/* Breadcrumbs (Scrollable on small screens) */}
+              <div className="flex items-center text-[10px] md:text-xs text-gray-500 overflow-x-auto no-scrollbar mask-linear-fade flex-1 min-w-0">
+                <span className="hover:text-white cursor-pointer transition-colors shrink-0">
                   root
                 </span>
-                <ChevronRight size={12} className="mx-1" />
-                <span className="hover:text-white cursor-pointer transition-colors">
+                <ChevronRight size={12} className="mx-1 shrink-0" />
+                <span className="hover:text-white cursor-pointer transition-colors shrink-0">
                   system
                 </span>
-                <ChevronRight size={12} className="mx-1" />
+                <ChevronRight size={12} className="mx-1 shrink-0" />
                 <span
-                  className={`${
-                    activeFolder === "dashboard"
-                      ? "text-purple-400 bg-purple-400/10 border-purple-400/20"
-                      : activeFolder === "network"
-                      ? "text-blue-400 bg-blue-400/10 border-blue-400/20"
-                      : "text-gray-300 bg-gray-800 border-gray-700"
-                  } px-2 py-0.5 rounded border`}
+                  className={`
+                    px-2 py-0.5 rounded border whitespace-nowrap
+                    ${
+                      activeFolder === "network"
+                        ? "text-blue-400 bg-blue-400/10 border-blue-400/20"
+                        : "text-purple-400 bg-purple-400/10 border-purple-400/20"
+                    } 
+                  `}
                 >
                   {getBreadcrumb()}
                 </span>
               </div>
-              <div className="ml-auto flex gap-2">
-                <div className="p-1.5 hover:bg-white/5 rounded text-gray-500 cursor-pointer">
-                  <Layout size={14} />
-                </div>
-              </div>
             </div>
 
-            {/* Content Area Switcher */}
+            {/* Dynamic Content */}
             <div
-              className={`flex-1 overflow-y-auto custom-scrollbar transition-opacity duration-300 ${
+              className={`flex-1 overflow-y-auto transition-opacity duration-300 ${
                 viewTransition ? "opacity-50" : "opacity-100"
               }`}
             >
@@ -2086,21 +2158,21 @@ const Projects = () => {
             </div>
 
             {/* Bottom Status Bar */}
-            <div className="bg-[#080808] border-t border-white/5 px-4 py-1 flex justify-between items-center text-[10px] text-gray-500 font-mono select-none">
-              <div className="flex gap-4">
-                <span className="hover:text-white cursor-pointer">
+            <div className="bg-[#080808] border-t border-white/5 px-2 md:px-4 py-1.5 flex justify-between items-center text-[9px] md:text-[10px] text-gray-500 font-mono select-none shrink-0 z-10">
+              <div className="flex gap-2 md:gap-4">
+                <span className="hover:text-white cursor-pointer hidden min-[360px]:inline">
                   READ-ONLY
                 </span>
                 <span className="hover:text-white cursor-pointer">UTF-8</span>
               </div>
               <div className="flex gap-2 items-center">
                 <div
-                  className={`w-2 h-2 rounded-full ${
+                  className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${
                     activeFolder === "network" ? "bg-blue-500" : "bg-green-500"
                   } animate-pulse`}
                 ></div>
                 <span>
-                  {activeFolder === "network" ? "NET_ACTIVE" : "SYSTEM ONLINE"}
+                  {activeFolder === "network" ? "NET_ACTIVE" : "ONLINE"}
                 </span>
               </div>
             </div>
