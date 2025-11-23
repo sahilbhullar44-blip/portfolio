@@ -384,7 +384,7 @@ const Hero = () => {
               {/* Chip Content */}
               <div className="relative z-30 flex flex-col items-center">
                 <Cpu size={48} className="text-cyan-400 mb-2" />
-                <div className="text-cyan-100 font-mono font-bold text-xl tracking-widest">
+                <div className="text-cyan-100 font-mono font-bold text-xl tracking-widest text-center">
                   {cpuText}
                 </div>
                 <div className="text-cyan-500/70 font-mono text-[10px] mt-1">
