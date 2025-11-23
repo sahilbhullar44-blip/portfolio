@@ -860,7 +860,7 @@ const About = () => {
       name: "certificates.js",
       icon: <FileText size={16} />,
       color: "text-emerald-400",
-      fileUrl: "/mnt/data/Sahilpreet Singh - Cv.pdf",
+      fileUrl: "https://53haygcbhbeqdgjo.public.blob.vercel-storage.com/Sahilpreet%20Singh%20-%20Cv.pdf",
       content: (
         <div className="space-y-3 font-mono text-sm md:text-base text-gray-300">
           <h3 className="text-white font-bold">Certificates</h3>
@@ -873,7 +873,7 @@ const About = () => {
           <p className="mt-3 text-gray-400">Full resume available here:</p>
           <Link
             className="underline text-sky-300"
-            href={"/mnt/data/Sahilpreet Singh - Cv.pdf"}
+            href={"https://53haygcbhbeqdgjo.public.blob.vercel-storage.com/Sahilpreet%20Singh%20-%20Cv.pdf"}
             target="_blank"
           >
             Open Resume (PDF)
