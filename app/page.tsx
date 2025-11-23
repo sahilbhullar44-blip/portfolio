@@ -2331,14 +2331,22 @@ const ContactForm = () => {
               </div>
               <div className="pt-2">
                 <button
-                  type="submit"
-                  disabled={isSubmitting || isSubmitted}
-                  className="group relative inline-flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-cyan-500/10 border border-white/10 hover:border-cyan-500/50 rounded text-gray-300 hover:text-cyan-400 transition-all interactive w-full md:w-auto"
+                  type={isSubmitted ? "button" : "submit"}
+                  disabled={isSubmitting}
+                  onClick={
+                    isSubmitted ? () => setIsSubmitted(false) : undefined
+                  }
+                  className="group relative inline-flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-cyan-500/10 border border-white/10 hover:border-cyan-500/50 rounded text-gray-300 hover:text-cyan-400 transition-all interactive w-full md:w-auto cursor-pointer"
                 >
                   {isSubmitting ? (
                     <span>Compiling...</span>
                   ) : isSubmitted ? (
-                    <span>Deployed!</span>
+                    <span className="flex items-center gap-2">
+                      <span className="text-green-400">Deployed!</span>
+                      <span className="text-gray-500 text-xs border-l border-gray-700 pl-2 ml-1">
+                        Restart?
+                      </span>
+                    </span>
                   ) : (
                     <span>
                       <span className="font-bold text-green-500">$</span> npm
