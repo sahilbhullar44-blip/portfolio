@@ -1191,7 +1191,7 @@ const TechStack = () => {
     <section
       id="stack"
       ref={containerRef}
-      className="min-h-screen bg-[#050505] py-24 relative overflow-hidden flex items-center justify-center"
+      className="min-h-screen bg-[#050505] py-12 md:py-24 relative overflow-hidden flex items-center justify-center"
     >
       {/* Background Gradient Lines */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -1226,50 +1226,50 @@ const TechStack = () => {
       {/* Section Shadow Overlays */}
       <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-b from-[#080808] via-[#080808]/50 to-transparent pointer-events-none z-1"></div>
       <div className="absolute bottom-0 left-0 w-full h-32 bg-linear-to-t from-[#050505] via-[#050505]/50 to-transparent pointer-events-none z-1"></div>
-      <div className="container mx-auto px-4 md:px-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+      <div className="container mx-auto px-4 md:px-10 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center relative z-10">
         <div>
           <div ref={titleRef}>
-            <div className="flex items-center gap-3 mb-4">
-              <Terminal className="text-cyan-400" size={24} />
-              <h2 className="text-4xl md:text-5xl font-bold text-white font-mono">
+            <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+              <Terminal className="text-cyan-400" size={20} />
+              <h2 className="text-3xl md:text-5xl font-bold text-white font-mono">
                 SYSTEM_<span className="text-cyan-400">MEMORY</span>
               </h2>
             </div>
-            <p className="text-gray-400 text-lg mb-10 max-w-lg leading-relaxed">
-              Managing technology expertise using a LIFO (Last-In, First-Out)
-              data structure.
+            <p className="text-gray-400 text-sm md:text-lg mb-6 md:mb-10 max-w-lg leading-relaxed">
+              Full-stack expertise spanning MERN architecture, realtime systems,
+              multi-tenant SaaS, and modern DevOps workflows.
             </p>
           </div>
 
           <div
             ref={controlsRef}
-            className="bg-[#0a0a0a] border border-white/10 rounded-xl p-6 mb-8 shadow-2xl shadow-cyan-900/5 relative overflow-hidden"
+            className="bg-[#0a0a0a] border border-white/10 rounded-xl p-4 md:p-6 mb-6 md:mb-8 shadow-2xl shadow-cyan-900/5 relative overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-6 text-xs font-mono text-gray-500">
+            <div className="flex items-center justify-between mb-4 md:mb-6 text-[10px] md:text-xs font-mono text-gray-500">
               <span>STATUS: READY</span>
               <span>MEM_ADDR: 0x7FFF</span>
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-2 md:gap-4">
               <button
                 onClick={handlePush}
-                className="flex-1 py-4 bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 text-blue-400 font-mono rounded flex flex-col items-center gap-2 interactive"
+                className="flex-1 py-3 md:py-4 bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/30 text-blue-400 font-mono rounded flex flex-col items-center gap-1 md:gap-2 interactive"
               >
-                <ArrowDownToLine size={20} />
-                <span>PUSH()</span>
+                <ArrowDownToLine size={16} className="md:w-5 md:h-5" />
+                <span className="text-xs md:text-sm">PUSH()</span>
               </button>
               <button
                 onClick={handlePop}
-                className="flex-1 py-4 bg-red-600/10 hover:bg-red-600/20 border border-red-500/30 text-red-400 font-mono rounded flex flex-col items-center gap-2 interactive"
+                className="flex-1 py-3 md:py-4 bg-red-600/10 hover:bg-red-600/20 border border-red-500/30 text-red-400 font-mono rounded flex flex-col items-center gap-1 md:gap-2 interactive"
               >
-                <ArrowUpFromLine size={20} />
-                <span>POP()</span>
+                <ArrowUpFromLine size={16} className="md:w-5 md:h-5" />
+                <span className="text-xs md:text-sm">POP()</span>
               </button>
               <button
                 onClick={handlePeek}
-                className="flex-1 py-4 bg-yellow-600/10 hover:bg-yellow-600/20 border border-yellow-500/30 text-yellow-400 font-mono rounded flex flex-col items-center gap-2 interactive"
+                className="flex-1 py-3 md:py-4 bg-yellow-600/10 hover:bg-yellow-600/20 border border-yellow-500/30 text-yellow-400 font-mono rounded flex flex-col items-center gap-1 md:gap-2 interactive"
               >
-                <Eye size={20} />
-                <span>PEEK()</span>
+                <Eye size={16} className="md:w-5 md:h-5" />
+                <span className="text-xs md:text-sm">PEEK()</span>
               </button>
             </div>
             <div className="mt-4 h-8 flex items-center justify-center">
@@ -1297,16 +1297,16 @@ const TechStack = () => {
 
         <div
           ref={stackRef}
-          className="relative h-[500px] w-full max-w-md mx-auto"
+          className="relative h-[350px] md:h-[500px] w-full max-w-md mx-auto"
         >
           <motion.div
-            className="absolute -left-12 z-20 flex items-center gap-2 text-cyan-400 font-mono text-xs"
+            className="absolute -left-8 md:-left-12 z-20 flex items-center gap-1 md:gap-2 text-cyan-400 font-mono text-[10px] md:text-xs"
             animate={{ bottom: Math.max(32, stack.length * 72 + 32) }}
           >
             <span>SP</span>
-            <span className="w-8 h-px bg-cyan-400"></span>
+            <span className="w-4 md:w-8 h-px bg-cyan-400"></span>
           </motion.div>
-          <div className="h-full w-full border-x-2 border-b-2 border-white/10 rounded-b-xl bg-white/2 backdrop-blur-sm relative p-4 flex flex-col-reverse gap-3 overflow-hidden">
+          <div className="h-full w-full border-x-2 border-b-2 border-white/10 rounded-b-xl bg-white/2 backdrop-blur-sm relative p-2 md:p-4 flex flex-col-reverse gap-2 md:gap-3 overflow-hidden">
             <div className="absolute right-2 top-0 bottom-0 flex flex-col justify-between text-[10px] font-mono text-gray-800 pointer-events-none select-none py-4 text-right">
               {Array.from({ length: 8 }).map((_, i) => (
                 <span key={i}>0x00{8 - i}0</span>
@@ -1332,16 +1332,18 @@ const TechStack = () => {
                       scale: 0.5,
                       filter: "blur(10px)",
                     }}
-                    className={`relative h-16 w-full rounded border ${item.border} ${item.bg} flex items-center justify-between px-4 shrink-0`}
+                    className={`relative h-12 md:h-16 w-full rounded border ${item.border} ${item.bg} flex items-center justify-between px-3 md:px-4 shrink-0`}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 md:gap-3">
                       {/* <div
                         className={`w-2 h-2 rounded-full ${item.color.replace(
                           "text-",
                           "bg-"
                         )}`}
                       ></div> */}
-                      <span className={`font-bold font-mono ${item.color}`}>
+                      <span
+                        className={`font-bold font-mono text-sm md:text-base ${item.color}`}
+                      >
                         {item.name}
                       </span>
                     </div>
