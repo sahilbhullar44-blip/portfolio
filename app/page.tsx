@@ -28,6 +28,7 @@ import {
   Server,
   X,
   Box,
+  Code,
 } from "lucide-react";
 
 import { getSystemSpecs } from "@/app/actions";
@@ -444,46 +445,16 @@ const Hero = () => {
 const About = () => {
   const [activeFile, setActiveFile] = useState("readme.md");
   const containerRef = useRef(null);
-  const titleRef = useRef(null);
-  const editorRef = useRef(null);
-
-  useGSAP(
-    () => {
-      gsap.from(titleRef.current, {
-        scrollTrigger: {
-          trigger: titleRef.current,
-          start: "top 80%",
-        },
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-      });
-
-      gsap.from(editorRef.current, {
-        scrollTrigger: {
-          trigger: editorRef.current,
-          start: "top 80%",
-        },
-        y: 100,
-        opacity: 0,
-        duration: 1,
-        delay: 0.2,
-        ease: "power3.out",
-      });
-    },
-    { scope: containerRef }
-  );
 
   const files = [
     // ================= README.md =================
     {
       id: "readme.md",
       name: "README.md",
-      icon: <FileText size={16} />,
+      icon: <FileText size={15} />,
       color: "text-yellow-400",
       content: (
-        <div className="space-y-4 font-mono text-sm md:text-base text-gray-300 leading-relaxed">
+        <div className="space-y-4 font-mono text-xs md:text-sm text-gray-300 leading-relaxed pb-6">
           <p className="text-gray-500">/**</p>
           <p className="text-gray-500">&nbsp;* @author Sahilpreet Singh</p>
           <p className="text-gray-500">
@@ -500,20 +471,20 @@ const About = () => {
             <span className="text-yellow-400">`</span>
           </p>
 
-          <p className="pl-4">
+          <p className="pl-2 md:pl-4 text-left">
             I am a Software Engineer from Amritsar with hands-on experience in
             building scalable multi-tenant apps, realtime modules, MongoDB
             aggregation pipelines, ETL automation, and clean React/Next.js
             frontends.
           </p>
 
-          <p className="pl-4">
+          <p className="pl-2 md:pl-4 text-left">
             Currently contributing at Tickmark.io, where I work on RBAC systems,
             agenda scheduling, realtime notifications, and transforming audio
             feedback into automated tasks using ETL + AI workflows.
           </p>
 
-          <p className="pl-4">
+          <p className="pl-2 md:pl-4 text-left">
             I love working on production-grade applications, clean system
             design, component architecture, and writing code that is expressive
             and maintainable.
@@ -526,54 +497,48 @@ const About = () => {
       ),
     },
 
-    // ================= stats.json (UPDATED with more data) =================
+    // ================= stats.json =================
     {
       id: "stats.json",
       name: "stats.json",
-      icon: <FileJson size={16} />,
+      icon: <FileJson size={15} />,
       color: "text-purple-400",
       content: (
-        <div className="font-mono text-sm md:text-base space-y-1">
+        <div className="font-mono text-xs md:text-sm space-y-1 overflow-x-hidden pb-6">
           <p>
             <span className="text-yellow-400">{"{"}</span>
           </p>
 
-          <div className="pl-6 space-y-2 border-l border-white/10 ml-2">
-            <p>
+          <div className="pl-2 md:pl-6 space-y-2 border-l border-white/10 ml-1 md:ml-2">
+            <p className="wrap-break-word">
               <span className="text-blue-400">&quot;name&quot;</span>:{" "}
               <span className="text-green-400">
                 &quot;Sahilpreet Singh&quot;
               </span>
               ,
             </p>
-            <p>
-              <span className="text-blue-400">
-                &quot;experience_years&quot;
-              </span>
-              :{" "}
+            <p className="wrap-break-word">
+              <span className="text-blue-400">&quot;experience&quot;</span>:{" "}
               <span className="text-green-400">
                 &quot;Since 2023 (2+ years)&quot;
               </span>
               ,
             </p>
 
-            <p>
+            <p className="wrap-break-word">
               <span className="text-blue-400">&quot;role&quot;</span>:{" "}
               <span className="text-green-400">
-                &quot;Software Development Engineer&quot;
+                &quot;Software Engineer&quot;
               </span>
               ,
             </p>
 
-            <p>
+            <p className="wrap-break-word">
               <span className="text-blue-400">&quot;location&quot;</span>:{" "}
-              <span className="text-green-400">
-                &quot;Timmowal, Amritsar, Punjab, India&quot;
-              </span>
-              ,
+              <span className="text-green-400">&quot;Punjab, India&quot;</span>,
             </p>
 
-            <p>
+            <p className="wrap-break-word">
               <span className="text-blue-400">&quot;email&quot;</span>:{" "}
               <span className="text-green-400">
                 &quot;sahilbhullar44@gmail.com&quot;
@@ -581,55 +546,46 @@ const About = () => {
               ,
             </p>
 
-            <p>
-              <span className="text-blue-400">&quot;phone&quot;</span>:{" "}
-              <span className="text-green-400">&quot;+91 8198014292&quot;</span>
-              ,
-            </p>
-
-            <p>
-              <span className="text-blue-400">&quot;currently_at&quot;</span>:{" "}
+            <p className="wrap-break-word">
+              <span className="text-blue-400">&quot;current&quot;</span>:{" "}
               <span className="text-green-400">&quot;Tickmark.io&quot;</span>,
             </p>
 
-            <p>
-              <span className="text-blue-400">&quot;top_skills&quot;</span>:{" "}
+            <div className="wrap-break-word">
+              <span className="text-blue-400">&quot;stack&quot;</span>:{" "}
               <span className="text-green-400">
-                [&quot;React&quot;,&quot;Next.js&quot;,&quot;Node.js&quot;,&quot;Expressjs&quot;,&quot;MongoDB&quot;,&quot;TypeScript&quot;,&quot;Socket.io&quot;]
+                [<br />
+                &nbsp;&quot;React&quot;, &quot;Next.js&quot;,
+                <br />
+                &nbsp;&quot;Node.js&quot;, &quot;MongoDB&quot;,
+                <br />
+                &nbsp;&quot;TypeScript&quot;, &quot;Socket.io&quot;
+                <br />]
               </span>
               ,
-            </p>
+            </div>
 
-            <p>
-              <span className="text-blue-400">&quot;other_tools&quot;</span>:{" "}
+            <div className="wrap-break-word">
+              <span className="text-blue-400">&quot;tools&quot;</span>:{" "}
               <span className="text-green-400">
-                [&quot;Docker&quot;,&quot;AWS&quot;,&quot;TanStack
-                Query&quot;,&quot;Swagger&quot;]
+                [<br />
+                &nbsp;&quot;Docker&quot;, &quot;AWS&quot;,
+                <br />
+                &nbsp;&quot;Swagger&quot;, &quot;TanStack&quot;
+                <br />]
               </span>
               ,
-            </p>
+            </div>
 
-            <p>
-              <span className="text-blue-400">&quot;languages&quot;</span>:{" "}
-              <span className="text-green-400">
-                [&quot;English&quot;,&quot;Punjabi&quot;,&quot;Hindi&quot;]
-              </span>
-              ,
-            </p>
-
-            <p>
+            <p className="wrap-break-word">
               <span className="text-blue-400">&quot;github&quot;</span>:{" "}
-              <span className="text-green-400">
-                &quot;https://github.com/sahilbhullar44-blip&quot;
-              </span>
-              ,
-            </p>
-
-            <p>
-              <span className="text-blue-400">&quot;linkedin&quot;</span>:{" "}
-              <span className="text-green-400">
-                &quot;https://www.linkedin.com/in/sahilpreet-singh-3042b02a5/&quot;
-              </span>
+              <a
+                href="https://github.com/sahilbhullar44-blip"
+                target="_blank"
+                className="text-green-400 underline decoration-green-400/30 hover:decoration-green-400"
+              >
+                &quot;sahilbhullar44-blip&quot;
+              </a>
               ,
             </p>
           </div>
@@ -641,215 +597,178 @@ const About = () => {
       ),
     },
 
-    // ================= history.log (FULL DETAILED with Education colored) =================
+    // ================= history.log =================
     {
       id: "history.log",
       name: "history.log",
-      icon: <FileCode size={16} />,
+      icon: <FileCode size={15} />,
       color: "text-blue-400",
       content: (
-        <div className="font-mono text-sm md:text-base space-y-10">
+        <div className="font-mono text-xs md:text-sm space-y-8 md:space-y-10 pb-6">
           {/* ---------- TICKMARK.IO ---------- */}
-          <div className="flex gap-4">
-            <div className="w-px bg-white/20 relative">
-              <div
-                className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full 
-            bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.6)]"
-              ></div>
+          <div className="flex gap-3 md:gap-4 relative">
+            {/* Timeline Line */}
+            <div className="absolute top-2 left-[5px] md:left-[9px] w-px h-[calc(100%+2rem)] bg-white/10 z-0"></div>
+
+            <div className="relative z-10 pt-1.5">
+              <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.6)]"></div>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="text-cyan-400 font-bold">
+            <div className="space-y-2 flex-1 pb-1">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                <span className="text-cyan-400 font-bold text-xs md:text-sm">
                   Nov 2024 – Present
                 </span>
-                <span className="text-gray-500 text-xs">[CURRENT ROLE]</span>
+                <span className="text-gray-500 text-[10px] md:text-xs tracking-wider bg-white/5 px-1.5 py-0.5 rounded w-fit">
+                  [CURRENT]
+                </span>
               </div>
 
-              <p className="text-white font-bold text-lg">
-                Software Development Engineer @ Tickmark.io
+              <p className="text-white font-bold text-sm md:text-lg leading-tight">
+                Software Engineer @ Tickmark.io
               </p>
 
-              <p className="text-gray-400">
-                Leading backend + realtime modules for a multi-tenant SaaS
-                project management platform.
+              <p className="text-gray-400 text-xs md:text-sm">
+                Leading backend + realtime modules for multi-tenant SaaS.
               </p>
 
-              <ul className="list-disc pl-6 text-gray-400 space-y-1">
-                <li>
-                  Built RBAC-based multi-tenant structure with permissions,
-                  roles & workspace control.
+              <ul className="list-none text-gray-500 space-y-1.5 mt-2">
+                <li className="flex gap-2">
+                  <span className="text-cyan-500/50 text-[10px] mt-0.5">▹</span>
+                  <span>Built RBAC multi-tenant system</span>
                 </li>
-                <li>
-                  Created Agenda Scheduling module with recurring meetings,
-                  timezone logic & cron reminders.
+                <li className="flex gap-2">
+                  <span className="text-cyan-500/50 text-[10px] mt-0.5">▹</span>
+                  <span>Created Agenda Scheduling module</span>
                 </li>
-                <li>
-                  Developed advanced MongoDB aggregation pipelines for analytics
-                  & multi-tenant separation.
+                <li className="flex gap-2">
+                  <span className="text-cyan-500/50 text-[10px] mt-0.5">▹</span>
+                  <span>Advanced MongoDB aggregation pipelines</span>
                 </li>
-                <li>
-                  Implemented ETL automation: converting patient audio feedback
-                  → structured tasks.
+                <li className="flex gap-2">
+                  <span className="text-cyan-500/50 text-[10px] mt-0.5">▹</span>
+                  <span>Audio-to-Task ETL automation + AI</span>
                 </li>
-                <li>
-                  Integrated Socket.io for realtime notifications, task updates
-                  & live sync.
+                <li className="flex gap-2">
+                  <span className="text-cyan-500/50 text-[10px] mt-0.5">▹</span>
+                  <span>Socket.io for realtime sync</span>
                 </li>
               </ul>
             </div>
           </div>
 
           {/* ---------- BESTJOBCOURSES ---------- */}
-          <div className="flex gap-4">
-            <div className="w-px bg-white/20 relative">
-              <div
-                className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full 
-            bg-lime-400 shadow-[0_0_10px_rgba(132,204,22,0.5)]"
-              ></div>
+          <div className="flex gap-3 md:gap-4 relative">
+            <div className="absolute top-2 left-[5px] md:left-[9px] w-px h-[calc(100%+2rem)] bg-white/10 z-0"></div>
+
+            <div className="relative z-10 pt-1.5">
+              <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-lime-400 shadow-[0_0_10px_rgba(132,204,22,0.5)]"></div>
             </div>
 
-            <div>
+            <div className="space-y-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-lime-400 font-bold">
+                <span className="text-lime-400 font-bold text-xs md:text-sm">
                   Nov 2024 – Present
                 </span>
               </div>
 
-              <p className="text-white font-bold text-lg">
-                Teaching — BestJobCourses (Tickmark Branch)
+              <p className="text-white font-bold text-sm md:text-lg leading-tight">
+                Instructor @ Tickmark Branch
               </p>
 
-              <p className="text-gray-400 text-sm">
-                Conducting training for MS Office, Google Apps, CCA
-                certification & JavaScript DOM.
+              <p className="text-gray-400 text-xs md:text-sm">
+                Training: MS Office, Google Apps, JS DOM.
               </p>
             </div>
           </div>
 
           {/* ---------- SCHOOL OF CODING ---------- */}
-          <div className="flex gap-4">
-            <div className="w-px bg-white/20 relative">
-              <div
-                className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full 
-            bg-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.5)]"
-              ></div>
+          <div className="flex gap-3 md:gap-4 relative">
+            <div className="absolute top-2 left-[5px] md:left-[9px] w-px h-[calc(100%+2rem)] bg-white/10 z-0"></div>
+
+            <div className="relative z-10 pt-1.5">
+              <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
             </div>
 
             <div className="space-y-2">
-              <span className="text-amber-400 font-bold">
+              <span className="text-amber-400 font-bold text-xs md:text-sm">
                 May 2024 – Oct 2025
               </span>
 
-              <p className="text-white font-bold text-lg">
-                Associate Developer @ School Of Coding (UK)
+              <p className="text-white font-bold text-sm md:text-lg leading-tight">
+                Associate Developer @ SoC (UK)
               </p>
 
-              <ul className="list-disc pl-6 text-gray-400 space-y-1">
-                <li>
-                  Developed full-stack features for educational dashboards &
-                  admin systems.
+              <ul className="list-none text-gray-500 space-y-1.5">
+                <li className="flex gap-2">
+                  <span className="text-amber-500/50 text-[10px] mt-0.5">
+                    ▹
+                  </span>
+                  <span>Educational dashboards & admin systems</span>
                 </li>
-                <li>
-                  Built responsive UIs & optimized backend APIs using MongoDB
-                  aggregations.
-                </li>
-                <li>
-                  Created an educational drag-and-drop environmental awareness
-                  game.
+                <li className="flex gap-2">
+                  <span className="text-amber-500/50 text-[10px] mt-0.5">
+                    ▹
+                  </span>
+                  <span>Drag-and-drop educational games</span>
                 </li>
               </ul>
             </div>
           </div>
 
           {/* ---------- SIMBAQUARTZ INTERN ---------- */}
-          <div className="flex gap-4">
-            <div className="w-px bg-white/20 relative">
-              <div
-                className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full 
-            bg-violet-400 shadow-[0_0_10px_rgba(139,92,246,0.6)]"
-              ></div>
+          <div className="flex gap-3 md:gap-4 relative">
+            <div className="absolute top-2 left-[5px] md:left-[9px] w-px h-[calc(100%+2rem)] bg-white/10 z-0"></div>
+
+            <div className="relative z-10 pt-1.5">
+              <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-violet-400 shadow-[0_0_10px_rgba(139,92,246,0.6)]"></div>
             </div>
 
             <div className="space-y-2">
-              <span className="text-violet-400 font-bold">
+              <span className="text-violet-400 font-bold text-xs md:text-sm">
                 Apr 2023 – Apr 2024
               </span>
 
-              <p className="text-white font-bold text-lg">
-                Intern / Developer Trainee @ SimbaQuartz
+              <p className="text-white font-bold text-sm md:text-lg leading-tight">
+                Developer Trainee @ SimbaQuartz
               </p>
 
-              <ul className="list-disc pl-6 text-gray-400 space-y-1">
-                <li>
-                  Worked on Node.js API development & integration with MongoDB
-                  schemas.
+              <ul className="list-none text-gray-500 space-y-1.5">
+                <li className="flex gap-2">
+                  <span className="text-violet-500/50 text-[10px] mt-0.5">
+                    ▹
+                  </span>
+                  <span>Node.js API dev & MongoDB Integration</span>
                 </li>
-                <li>
-                  Collaborated with frontend teams to ship production features.
-                </li>
-                <li>
-                  Participated in sprints, debugging sessions & QA cycles.
+                <li className="flex gap-2">
+                  <span className="text-violet-500/50 text-[10px] mt-0.5">
+                    ▹
+                  </span>
+                  <span>Collaborated on production features</span>
                 </li>
               </ul>
             </div>
           </div>
 
-          {/* ---------- SIMBAQUARTZ APPRENTICE ---------- */}
-          <div className="flex gap-4">
-            <div className="w-px bg-white/20 relative">
-              <div
-                className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full 
-            bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.5)]"
-              ></div>
+          {/* ---------- EDUCATION ---------- */}
+          <div className="flex gap-3 md:gap-4">
+            <div className="relative z-10 pt-1.5">
+              <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full bg-indigo-400"></div>
             </div>
 
             <div className="space-y-2">
-              <span className="text-sky-400 font-bold">
-                Jan 2023 – Mar 2023
-              </span>
-
-              <p className="text-white font-bold text-lg">
-                Apprentice @ SimbaQuartz
+              <p className="text-white font-bold text-sm md:text-lg">
+                Education
               </p>
-
-              <p className="text-gray-400 text-sm">
-                Assisted in backend development & testing; gained practical
-                exposure to real-world projects.
-              </p>
-            </div>
-          </div>
-
-          {/* ---------- EDUCATION (COLORED) ---------- */}
-          <div className="flex gap-4">
-            <div className="w-px bg-white/20 relative"></div>
-
-            <div className="space-y-1">
-              <p className="text-white font-bold text-lg">Education</p>
-              <p>
-                <span className="text-indigo-300 font-semibold">
+              <div className="text-xs md:text-sm">
+                <p className="text-indigo-300 font-semibold">
                   B.Sc. Information Technology
-                </span>
-                <span className="text-gray-400">
-                  {" "}
-                  — Sri Guru Angad Dev College
-                </span>
-                <span className="ml-2 text-amber-300"> (May 2023)</span>
-              </p>
-              <p className="mt-1">
-                <span className="text-white font-bold">Achievement:</span>{" "}
-                <span className="text-emerald-300">
-                  District Topper (1st Rank)
-                </span>
-              </p>
-
-              <p className="text-gray-400 mt-2">
-                <span className="font-bold text-white">Key skills:</span>{" "}
-                <span className="text-green-300">
-                  React, Next.js, Node.js, MongoDB (aggregation), TypeScript,
-                  Socket.io, ETL
-                </span>
-              </p>
+                </p>
+                <p className="text-gray-500">Sri Guru Angad Dev College</p>
+                <p className="text-amber-300 text-[10px] mt-0.5">
+                  Achievement: District Topper (1st Rank)
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -860,29 +779,56 @@ const About = () => {
     {
       id: "certificates.js",
       name: "certificates.js",
-      icon: <FileText size={16} />,
+      icon: <FileText size={15} />,
       color: "text-emerald-400",
-      fileUrl:
-        "https://53haygcbhbeqdgjo.public.blob.vercel-storage.com/Sahilpreet%20Singh%20-%20Cv.pdf",
       content: (
-        <div className="space-y-3 font-mono text-sm md:text-base text-gray-300">
-          <h3 className="text-white font-bold">Certificates</h3>
-          <ul className="pl-4 list-disc text-gray-300 space-y-1">
-            <li>ISO Certified Web Designing — Simbacourse</li>
-            <li>ISO Certified Node.js Development — Simbacourse</li>
-            <li>ISO Certified CCA Certificate — Simbacourse</li>
-            <li>React.js Course — CodeProg.com</li>
+        <div className="space-y-4 font-mono text-xs md:text-sm text-gray-300 pb-6">
+          <h3 className="text-white font-bold text-sm md:text-base">
+            Certificates & Licenses
+          </h3>
+          <ul className="pl-2 space-y-2 text-gray-300">
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-400 mt-0.5">✓</span>
+              <span>
+                ISO Certified Web Designing{" "}
+                <span className="text-gray-500">- Simbacourse</span>
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-400 mt-0.5">✓</span>
+              <span>
+                ISO Certified Node.js Dev{" "}
+                <span className="text-gray-500">- Simbacourse</span>
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-400 mt-0.5">✓</span>
+              <span>
+                CCA Certificate{" "}
+                <span className="text-gray-500">- Simbacourse</span>
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-emerald-400 mt-0.5">✓</span>
+              <span>
+                React.js Course{" "}
+                <span className="text-gray-500">- CodeProg.com</span>
+              </span>
+            </li>
           </ul>
-          <p className="mt-3 text-gray-400">Full resume available here:</p>
-          <Link
-            className="underline text-sky-300"
-            href={
-              "https://53haygcbhbeqdgjo.public.blob.vercel-storage.com/Sahilpreet%20Singh%20-%20Cv.pdf"
-            }
-            target="_blank"
-          >
-            Open Resume (PDF)
-          </Link>{" "}
+
+          <div className="pt-4 border-t border-white/10 mt-4">
+            <p className="text-gray-400 mb-2">Download Resume:</p>
+            <a
+              className="inline-flex items-center gap-2 text-sky-300 hover:text-sky-200 transition-colors border border-sky-400/30 bg-sky-400/10 px-3 py-2 rounded text-xs md:text-sm"
+              href="https://53haygcbhbeqdgjo.public.blob.vercel-storage.com/Sahilpreet%20Singh%20-%20Cv.pdf"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FileText size={14} />
+              Sahilpreet_Singh_CV.pdf
+            </a>
+          </div>
         </div>
       ),
     },
@@ -892,7 +838,7 @@ const About = () => {
     <section
       id="about"
       ref={containerRef}
-      className="min-h-screen bg-[#080808] py-24 flex items-center justify-center relative overflow-hidden"
+      className="min-h-screen bg-[#080808] py-16 md:py-24 flex items-center justify-center relative overflow-hidden"
     >
       {/* Background Gradient Lines */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -924,42 +870,59 @@ const About = () => {
           />
         ))}
       </div>
-      {/* Section Shadow Overlays */}
-      <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-b from-black via-black/50 to-transparent pointer-events-none z-1"></div>
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-linear-to-t from-[#050505] via-[#050505]/50 to-transparent pointer-events-none z-1"></div>
-      <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 mix-blend-overlay pointer-events-none"></div>
 
-      <div className="container mx-auto px-4 md:px-10 relative z-10">
-        <div ref={titleRef} className="mb-12 flex items-end gap-4">
-          <h2 className="text-4xl md:text-6xl font-bold text-white font-mono">
-            SOURCE_<span className="text-purple-400">CODE</span>
-          </h2>
-        </div>
+      {/* Section Shadows */}
+      <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-b from-black via-black/50 to-transparent pointer-events-none z-0"></div>
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-linear-to-t from-[#050505] via-[#050505]/50 to-transparent pointer-events-none z-0"></div>
 
-        <div
-          ref={editorRef}
-          className="w-full max-w-6xl mx-auto bg-[#0d0d0d] rounded-xl overflow-hidden border border-white/10 shadow-2xl shadow-black/50 flex flex-col md:flex-row h-[500px]"
+      <div className="container mx-auto px-2 md:px-10 relative z-10">
+        {/* TITLE SECTION */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="mb-6 md:mb-12 flex items-center gap-3 px-2 md:px-0"
         >
-          {/* SIDEBAR */}
-          <div className="w-full md:w-64 bg-[#0a0a0a] border-r border-white/5 flex flex-col">
-            <div className="p-3 text-xs font-bold text-gray-500 tracking-widest flex items-center gap-2">
-              <Layout size={14} /> EXPERIENCE EDITOR
+          <Code className="text-purple-500 w-8 h-8 md:w-12 md:h-12" />
+          <h2 className="text-3xl md:text-6xl font-bold text-white font-mono tracking-tight">
+            SOURCE_
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-500">
+              CODE
+            </span>
+          </h2>
+        </motion.div>
+
+        {/* EDITOR WINDOW */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true }}
+          className="w-full max-w-6xl mx-auto bg-[#0d0d0d] rounded-xl overflow-hidden border border-white/10 shadow-2xl shadow-black/50 flex flex-col md:flex-row h-[70vh] md:h-[600px]"
+        >
+          {/* SIDEBAR (Hidden on mobile) */}
+          <div className="hidden md:flex w-64 bg-[#0a0a0a] border-r border-white/5 flex-col shrink-0">
+            <div className="p-3 text-xs font-bold text-gray-500 tracking-widest flex items-center gap-2 border-b border-white/5">
+              <Layout size={14} /> EXPLORER
             </div>
             <div className="flex-1 overflow-y-auto py-2">
-              <div className="px-4 py-1 text-gray-400 text-sm flex items-center gap-1">
+              <div className="px-4 py-1 text-gray-400 text-sm flex items-center gap-1 mb-1">
                 <ChevronRight size={14} className="rotate-90" />
                 <Folder size={14} className="text-blue-400" />
-                <span className="font-bold text-gray-300">files</span>
+                <span className="font-bold text-gray-300 text-xs tracking-wide">
+                  portfolio-v2
+                </span>
               </div>
-              <div className="pl-4">
+              <div className="pl-3">
                 {files.map((file) => (
                   <button
                     key={file.id}
                     onClick={() => setActiveFile(file.id)}
-                    className={`w-full text-left px-4 py-1.5 text-sm font-mono flex items-center gap-2 transition-colors border-l-2 ${
+                    className={`w-full text-left px-3 py-1.5 text-xs md:text-sm font-mono flex items-center gap-2 transition-colors border-l-2 ${
                       activeFile === file.id
                         ? "bg-white/5 text-white border-cyan-400"
-                        : "text-gray-500 border-transparent hover:text-gray-300"
+                        : "text-gray-500 border-transparent hover:text-gray-300 hover:bg-white/5"
                     }`}
                   >
                     {file.icon}
@@ -970,17 +933,18 @@ const About = () => {
             </div>
           </div>
 
-          {/* EDITOR */}
-          <div className="flex-1 flex flex-col bg-[#111]">
-            <div className="flex bg-[#0a0a0a] border-b border-white/5 overflow-x-auto hide-scrollbar">
+          {/* EDITOR AREA */}
+          <div className="flex-1 flex flex-col bg-[#111] min-w-0 relative overflow-hidden">
+            {/* TAB BAR (Visible on All Screens) */}
+            <div className="flex bg-[#0a0a0a] border-b border-white/5 overflow-x-auto no-scrollbar shrink-0">
               {files.map((file) => (
                 <button
                   key={file.id}
                   onClick={() => setActiveFile(file.id)}
-                  className={`flex items-center gap-2 px-4 py-2 text-xs font-mono min-w-[120px] border-r border-white/5 transition-colors ${
+                  className={`flex items-center gap-2 px-3 md:px-4 py-2.5 text-xs font-mono min-w-fit md:min-w-[120px] border-r border-white/5 transition-colors whitespace-nowrap ${
                     activeFile === file.id
                       ? "bg-[#111] text-white border-t-2 border-t-cyan-400"
-                      : "text-gray-500 hover:bg-[#111]/50"
+                      : "text-gray-500 hover:bg-[#111]/50 bg-[#0c0c0c]"
                   }`}
                 >
                   <span className={file.color}>{file.icon}</span>
@@ -988,25 +952,53 @@ const About = () => {
                 </button>
               ))}
             </div>
-            <div className="p-6 md:p-10 h-full overflow-y-auto">
+
+            {/* CONTENT AREA */}
+            <div
+              className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 min-h-0 touch-pan-y"
+              style={{ WebkitOverflowScrolling: "touch" }}
+            >
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeFile}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="min-h-full pb-20"
                 >
                   {files.find((f) => f.id === activeFile)?.content}
                 </motion.div>
               </AnimatePresence>
             </div>
+
+            {/* Inline styles for scrollbar visibility */}
+            <style
+              dangerouslySetInnerHTML={{
+                __html: `
+                .custom-scrollbar::-webkit-scrollbar {
+                  width: 6px;
+                  height: 6px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                  background: rgba(255, 255, 255, 0.05);
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                  background: rgba(255, 255, 255, 0.15);
+                  border-radius: 3px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                  background: rgba(255, 255, 255, 0.25);
+                }
+            `,
+              }}
+            />
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 };
-
 // --- 5. INTERACTIVE MEMORY STACK ---
 const techPool = [
   {
@@ -2098,9 +2090,7 @@ const Projects = () => {
                   ? "opacity-0 translate-y-4 pointer-events-none"
                   : "opacity-100 translate-y-0"
               }`}
-            >
-              
-            </div>
+            ></div>
           </div>
 
           {/* MAIN CONTENT AREA */}
