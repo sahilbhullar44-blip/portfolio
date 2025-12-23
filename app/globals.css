@@ -20,7 +20,28 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Custom Scrollbar Styles */
+/* Global Scrollbar */
+::-webkit-scrollbar {
+  width: 8px; /* Slightly wider for better usability vs aesthetic balance */
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505; /* Very dark background to blend in */
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: rgba(34, 211, 238, 0.4); /* Cyan-400 with opacity */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 211, 238, 0.6); /* Cyan-400 with higher opacity on hover */
+}
+
+
+/* Custom Scrollbar Styles (Utility) */
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(34, 211, 238, 0.3) transparent;

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import SmoothScrolling from "@/app/components/SmoothScrolling";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Sahilpreet Singh - Full Stack Developer",
-  description: "Software Engineer specializing in MERN stack, realtime systems, and multi-tenant architecture. Building scalable applications with React, Node.js, and MongoDB.",
+  description:
+    "Software Engineer specializing in MERN stack, realtime systems, and multi-tenant architecture. Building scalable applications with React, Node.js, and MongoDB.",
 };
 
 export default function RootLayout({
@@ -25,12 +27,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar />
-        {children}
+        <SmoothScrolling>
+          <Navbar />
+          {children}
+        </SmoothScrolling>
       </body>
     </html>
   );
