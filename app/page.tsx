@@ -33,14 +33,14 @@ const Footer = () => (
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
           <span>ALL SYSTEMS OPERATIONAL</span>
         </div>
-        <span className="text-white/20 text-xs">|</span>
+        {/* <span className="text-white/20 text-xs">|</span>
         <a
           href="/netrunner"
           className="text-xs font-mono text-cyan-500/70 hover:text-cyan-400 transition-colors interactive relative group"
         >
           <span className="relative z-10">NETRUNNER_ARCHIVE</span>
           <span className="absolute inset-0 bg-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity rounded px-2 -mx-2"></span>
-        </a>
+        </a> */}
       </div>
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
