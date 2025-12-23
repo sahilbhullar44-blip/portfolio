@@ -1,0 +1,359 @@
+.terminalOverlay {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 1000;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.crtMonitor {
+  width: 100%;
+  max-width: 1200px;
+  height: 95vh;
+  background: #051015;
+  border: 2px solid #333;
+  border-top: 4px solid var(--neon-cyan);
+  border-bottom: 4px solid var(--neon-cyan);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(0, 243, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scanlines Overlay */
+.crtMonitor::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 2;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+/* CRT Vignette */
+.crtMonitor::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.6) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.termScrollArea {
+  padding: 0;
+  overflow-y: auto;
+  color: var(--neon-cyan);
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.termNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 243, 255, 0.05);
+  padding: 10px 20px;
+  border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+  font-size: 0.8rem;
+}
+
+.closeBtn {
+  color: #fff;
+  background: var(--neon-pink);
+  border: none;
+  padding: 6px 16px;
+  cursor: crosshair;
+  font-weight: bold;
+  font-family: var(--font-head);
+  letter-spacing: 1px;
+  transition: 0.2s;
+}
+
+.closeBtn:hover {
+  background: #fff;
+  color: var(--neon-pink);
+  box-shadow: 0 0 10px var(--neon-pink);
+}
+
+.termGrid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  height: 100%;
+  overflow: hidden;
+}
+
+.termSidebar {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 243, 255, 0.05) 100%);
+  border-right: 1px solid rgba(0, 243, 255, 0.2);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebarHeader {
+  color: var(--neon-cyan);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid var(--neon-cyan);
+  padding-bottom: 5px;
+}
+
+.metaItem {
+  margin-bottom: 25px;
+  border-left: 2px solid var(--neon-pink);
+  padding-left: 15px;
+}
+
+.metaLabel {
+  display: block;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.metaValue {
+  color: #fff;
+  font-size: 1rem;
+  font-family: var(--font-head);
+  text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+}
+
+.signalViz {
+  margin-top: auto;
+  height: 60px;
+  display: flex;
+  gap: 3px;
+  align-items: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vizBar {
+  flex: 1;
+  background: var(--neon-cyan);
+  opacity: 0.7;
+  animation: eq-anim 0.8s infinite ease-in-out alternate;
+}
+
+.vizBar:nth-child(even) {
+  animation-duration: 0.6s;
+  animation-direction: alternate-reverse;
+}
+
+.vizBar:nth-child(3n) {
+  animation-duration: 1s;
+}
+
+@keyframes eq-anim {
+  0% {
+    height: 10%;
+    opacity: 0.3;
+  }
+  100% {
+    height: 100%;
+    opacity: 1;
+  }
+}
+
+.termMain {
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.termTitleBlock {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 20px;
+}
+
+.termTitle {
+  font-family: var(--font-head);
+  font-size: 3rem;
+  line-height: 1;
+  color: white;
+  text-shadow: 2px 2px 0px var(--neon-pink);
+  max-width: 80%;
+}
+
+.termBadge {
+  background: transparent;
+  border: 1px solid var(--neon-yellow);
+  color: var(--neon-yellow);
+  padding: 5px 10px;
+  font-size: 1.2rem;
+  font-family: var(--font-code);
+}
+
+.techFrame {
+  position: relative;
+  margin-bottom: 40px;
+  padding: 5px;
+  border: 1px solid rgba(0, 243, 255, 0.15);
+}
+
+.techFrame::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 30px;
+  height: 30px;
+  border-top: 3px solid var(--neon-cyan);
+  border-left: 3px solid var(--neon-cyan);
+}
+
+.techFrame::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 30px;
+  height: 30px;
+  border-bottom: 3px solid var(--neon-cyan);
+  border-right: 3px solid var(--neon-cyan);
+}
+
+.termImg {
+  width: 100%;
+  display: block;
+  filter: sepia(20%) hue-rotate(170deg) saturate(140%) contrast(1.1);
+  opacity: 0.9;
+}
+
+.termText {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: #d0f0f5;
+  margin-bottom: 50px;
+  max-width: 900px;
+}
+
+.consoleContainer {
+  border: 1px solid #444;
+  background: rgba(0, 0, 0, 0.6);
+  font-family: var(--font-code);
+}
+
+.consoleBar {
+  background: #222;
+  padding: 5px 15px;
+  font-size: 0.75rem;
+  color: #aaa;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #444;
+}
+
+.consoleBody {
+  padding: 25px;
+}
+
+.consoleControls {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.cmdInput {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  font-family: var(--font-code);
+  font-size: 1rem;
+  flex-grow: 1;
+  padding: 10px;
+}
+
+.cmdInput:focus {
+  outline: none;
+  border-color: #fff;
+}
+
+.cmdBtn {
+  background: rgba(0, 243, 255, 0.1);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  padding: 10px 20px;
+  cursor: crosshair;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.cmdBtn:hover {
+  background: var(--neon-cyan);
+  color: #000;
+}
+
+.cmdBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.consoleOutput {
+  margin-top: 20px;
+  color: var(--neon-yellow);
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  border-left: 2px solid var(--neon-yellow);
+  padding-left: 15px;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .crtMonitor {
+    height: 100vh;
+    border: none;
+  }
+  
+  .termGrid {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+    display: block;
+  }
+  
+  .termSidebar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    border-right: none;
+    border-bottom: 1px solid var(--neon-cyan);
+  }
+  
+  .termMain {
+    overflow-y: visible;
+  }
+  
+  .signalViz {
+    display: none;
+  }
+}

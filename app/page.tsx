@@ -30,6 +30,8 @@ import {
   Box,
   Code,
 } from "lucide-react";
+// import Netrunner from "@/app/netrunner/Netrunner";
+import SectionBackground from "@/app/components/SectionBackground";
 
 import { getSystemSpecs } from "@/app/actions";
 
@@ -1767,7 +1769,7 @@ const Projects = () => {
       : allFiles;
 
     return (
-      <div className="flex-1 p-3 md:p-6 overflow-y-auto custom-scrollbar pb-20">
+      <div className="flex-1 p-3 md:p-6 overflow-y-auto hide-scrollbar pb-20">
         {/* Empty State */}
         {currentFiles.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-gray-600 opacity-50">
@@ -1872,47 +1874,7 @@ const Projects = () => {
       className="bg-[#050505] py-8 md:py-24 px-2 md:px-8 relative overflow-hidden min-h-screen flex flex-col items-center justify-center font-mono"
     >
       {/* --- BACKGROUND FX --- */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        {/* Horizontal Lines */}
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={`h-${i}`}
-            className="absolute h-px bg-linear-to-r from-transparent via-pink-500/20 to-transparent w-full"
-            style={{ top: `${10 + i * 15}%` }}
-            animate={{ x: ["-100%", "100%"] }}
-            transition={{
-              duration: 14 + i * 2,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-        ))}
-        {/* Vertical Lines */}
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={`v-${i}`}
-            className="absolute w-px bg-linear-to-b from-transparent via-purple-500/20 to-transparent h-full"
-            style={{ left: `${10 + i * 15}%` }}
-            animate={{ y: ["-100%", "100%"] }}
-            transition={{
-              duration: 18 + i * 2,
-              repeat: Infinity,
-              ease: "linear",
-              delay: i * 0.4,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Grid Overlay */}
-      <div
-        className="absolute inset-0 z-0 opacity-20 pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(#1a1a1a 1px, transparent 1px), linear-gradient(90deg, #1a1a1a 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      ></div>
+      <SectionBackground />
 
       {/* --- TITLE --- */}
       <motion.div
@@ -2141,7 +2103,7 @@ const Projects = () => {
 
             {/* Dynamic Content */}
             <div
-              className={`flex-1 overflow-y-auto transition-opacity duration-300 ${
+              className={`flex-1 overflow-y-auto hide-scrollbar transition-opacity duration-300 ${
                 viewTransition ? "opacity-50" : "opacity-100"
               }`}
             >
@@ -2450,9 +2412,19 @@ const Footer = () => (
           © {new Date().getFullYear()} INC.
         </span>{" "}
       </div>
-      <div className="flex items-center gap-2 text-xs font-mono text-gray-500">
-        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-        <span>ALL SYSTEMS OPERATIONAL</span>
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 text-xs font-mono text-gray-500">
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+          <span>ALL SYSTEMS OPERATIONAL</span>
+        </div>
+        <span className="text-white/20 text-xs">|</span>
+        <a
+          href="/netrunner"
+          className="text-xs font-mono text-cyan-500/70 hover:text-cyan-400 transition-colors interactive relative group"
+        >
+          <span className="relative z-10">NETRUNNER_ARCHIVE</span>
+          <span className="absolute inset-0 bg-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity rounded px-2 -mx-2"></span>
+        </a>
       </div>
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -2486,6 +2458,7 @@ const App = () => {
             <About />
             <TechStack />
             <Projects />
+            {/* <Netrunner /> */}
             <ContactForm />
           </motion.main>
         )}
