@@ -95,7 +95,7 @@ const Projects = () => {
       : allFiles;
 
     return (
-      <div className="flex-1 p-3 md:p-6 overflow-y-auto hide-scrollbar pb-20">
+      <div className="flex-1 p-3 md:p-6 pb-20">
         {/* Empty State */}
         {currentFiles.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-gray-600 opacity-50">
@@ -428,12 +428,14 @@ const Projects = () => {
             </div>
 
             {/* Dynamic Content */}
-            <div
-              className={`flex-1 overflow-y-auto hide-scrollbar transition-opacity duration-300 \${
-                viewTransition ? "opacity-50" : "opacity-100"
-              }`}
-            >
-              {renderMainContent()}
+            <div className="flex-1 overflow-y-auto custom-scrollbar touch-pan-y">
+              <div
+                className={`transition-opacity duration-300 ${
+                  viewTransition ? "opacity-50" : "opacity-100"
+                }`}
+              >
+                {renderMainContent()}
+              </div>
             </div>
 
             {/* Bottom Status Bar */}

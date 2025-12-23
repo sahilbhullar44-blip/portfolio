@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import CustomCursor from "@/app/components/CustomCursor";
 import BootLoader from "@/app/components/BootLoader";
 import Hero from "@/app/components/Hero";
 import About from "@/app/components/About";
@@ -57,9 +56,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   return (
-    <div className="bg-black min-h-screen cursor-none selection:bg-cyan-400 selection:text-black">
-      <CustomCursor />
-
+    <div className="bg-black min-h-screen selection:bg-cyan-400 selection:text-black">
       <AnimatePresence mode="wait">
         {isLoading ? (
           <BootLoader key="bootloader" onComplete={() => setIsLoading(false)} />
