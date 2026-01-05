@@ -68,9 +68,9 @@ const Projects = () => {
 
   // Handle Folder Selection
   const handleFolderClick = (folderId: string) => {
+    setMobileSidebarOpen(false); // Always close sidebar on mobile selection
     if (folderId === activeFolder) return;
     setActiveFolder(folderId);
-    setMobileSidebarOpen(false); // Close sidebar on mobile after selection
   };
 
   const getBreadcrumb = () => {
@@ -285,7 +285,7 @@ const Projects = () => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setMobileSidebarOpen(false)}
-                className="absolute inset-0 bg-black/80 z-20 md:hidden backdrop-blur-sm"
+                className="absolute inset-0 bg-black/80 z-40 md:hidden backdrop-blur-sm"
               />
             )}
           </AnimatePresence>
@@ -294,10 +294,10 @@ const Projects = () => {
           <div
             className={`
                 bg-[#080808] border-r border-white/5 flex flex-col justify-between 
-                transition-all duration-300 ease-in-out z-30
+                transition-all duration-300 ease-in-out z-50
 
                 absolute md:relative h-full top-0 left-0
-                \${
+                ${
                   isMobileSidebarOpen
                     ? "translate-x-0 w-[80%] max-w-[250px] shadow-2xl"
                     : "-translate-x-full max-w-[250px]"
@@ -305,7 +305,7 @@ const Projects = () => {
                 
 
                 md:translate-x-0 
-                \${isSidebarOpen ? "md:w-64" : "md:w-16 md:overflow-hidden"}
+                ${isSidebarOpen ? "md:w-64" : "md:w-16 md:overflow-hidden"}
             `}
           >
             <div className="p-4 space-y-6">
@@ -315,8 +315,9 @@ const Projects = () => {
                   Navigate
                 </span>
                 <button
+                  type="button"
                   onClick={() => setMobileSidebarOpen(false)}
-                  className="text-gray-400 p-1 hover:bg-white/10 rounded"
+                  className="text-gray-400 p-2 hover:bg-white/10 rounded active:scale-95 transition-transform"
                 >
                   <X size={18} />
                 </button>
